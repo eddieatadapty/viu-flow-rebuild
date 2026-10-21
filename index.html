@@ -1,0 +1,1794 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<!-- flow-rebuild template (Growth Audit, v3: + walkthrough video, phone view/QR, localization, paywall today vs proposed). Replace every double-brace placeholder, everything between
+     the SCREENS markers, and the CONTENT json. Rules that brand-check.py enforces are marked RULE.
+     Reference builds: eddieatadapty.github.io/datacamp-flow-rebuild-v2 · bterzic123.github.io/planner5d-flow-rebuild-v2 -->
+<title>Viu Growth Audit</title>
+<meta name="description" content="Five ideas to turn more Viu users into subscribers, each built into a clickable version of Viu's own onboarding. Prepared by Adapty.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- the APP's font (brand.json fonts, or the closest Google family) + a mono if the app shows code -->
+<!-- Viu’s in-app type is the iOS system font (read off its App Store screenshots), so no web font is loaded for the screens -->
+<style>
+/* BRAND:START — the only place the APP's colours are written as literals. RULE: every value here is
+   copied from brand.json / a sampled pixel of the app's own screens; never "improved". Used only inside the phone. */
+:root{
+  --b-primary:#ffbf00;      /* viu.com logo + CSS yellow; in-app scrubber samples #f9bf0a */
+  --b-primary-ink:#000000;  /* black on yellow: their "Fresh Release" tag */
+  --b-bg:#000000;           /* app background (screenshots 1, 4) */
+  --b-surface:#0d0d0d;      /* sampled: episode panel (shot 4) */
+  --b-surface2:#191919;     /* sampled: info bar (shot 3) */
+  --b-ink:#ffffff;
+  --b-ink2:#b3b3b3;         /* viu.com secondary text */
+  --b-line:#3d3d3d;         /* sampled: card shade (shot 1) */
+  --b-accent2:#ffbf00;
+  --b-grad:none;
+  --b-radius:10px;
+  --b-pill:6px;             /* their tags and buttons are near-square */
+  --b-font:-apple-system,"SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --b-mono:ui-monospace,monospace;
+}
+/* BRAND:END */
+/* A second app family (e.g. a mono for code) is applied HERE, never in SCREENS css (brand-check allows only
+   var(--b-font) there). Prefix with .scr so it beats the screens' font shorthands, e.g.:
+   .scr .code,.scr .instr code{font-family:var(--b-mono)} */
+
+/* ================= the audit page — Adapty's, not the app's. Light, Apple-style. ================= */
+:root{
+  color-scheme:light;
+  --st-ground:#f5f5f7; --st-card:#ffffff; --st-ink:#1d1d1f; --st-ink2:#6e6e73; --st-ink3:#86868b;
+  --st-hair:rgba(0,0,0,.09); --st-link:#0066cc;
+  --st-accent:#161616;      /* dark brand colour of the APP: buttons, the outcome band */
+  --st-hi:#ffbf00;          /* bright brand colour of the APP: outcome numbers on the band, idea dots */
+  --st-mark:rgba(255,191,0,.55); /* --st-hi at ~.5 alpha: the highlighter under impact numbers */
+  --st-font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:64px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+html,body{margin:0}
+body{background:var(--st-ground);color:var(--st-ink);font-family:var(--st-font);-webkit-font-smoothing:antialiased;font-size:17px;line-height:1.47}
+.au-wrap{max-width:1080px;margin:0 auto;padding-inline:22px}
+a{color:var(--st-link)}
+button{font-family:inherit}
+:focus-visible{outline:2px solid var(--st-link);outline-offset:3px;border-radius:6px}
+mark{background:linear-gradient(transparent 62%,var(--st-mark) 62%,var(--st-mark) 92%,transparent 92%);color:inherit;padding:0 .04em}
+
+/* nav */
+.au-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:rgba(245,245,247,.8);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--st-hair)}
+.au-nav-in{max-width:1080px;margin:0 auto;padding-inline:22px;height:52px;display:flex;align-items:center;gap:26px}
+.au-brand{display:flex;align-items:center;gap:10px;margin-right:auto;min-width:0}
+.au-brand img{width:26px;height:26px;border-radius:7px;flex:none}
+.au-brand span{font-size:15px;font-weight:600;letter-spacing:-.01em;white-space:nowrap}
+.au-brand small{font-size:15px;font-weight:400;color:var(--st-ink2)}
+.au-nav a{font-size:13px;color:var(--st-ink);text-decoration:none;opacity:.82}
+.au-nav a:hover{opacity:1}
+@media (max-width:560px){.au-nav a.au-opt{display:none}.au-brand small{display:none}}
+
+/* hero */
+.au-top-hero{text-align:center;padding-top:clamp(56px,9vw,96px);overflow:hidden;position:relative}
+.au-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:var(--st-ink);margin:0 0 14px}
+.au-eyebrow i{width:8px;height:8px;border-radius:50%;background:var(--st-hi);box-shadow:0 0 0 3px var(--st-mark)}
+.au-display{font-size:clamp(60px,12vw,120px);line-height:.98;font-weight:700;letter-spacing:-.05em;margin:0}
+.au-lede{font-size:clamp(23px,3.4vw,34px);line-height:1.16;font-weight:600;letter-spacing:-.022em;max-width:760px;margin:22px auto 0;text-wrap:balance}
+.au-lede span{color:var(--st-ink2)}
+.au-byline{font-size:14px;color:var(--st-ink3);margin:18px 0 0}
+.au-ctas{display:flex;gap:26px;justify-content:center;align-items:center;margin-top:30px;flex-wrap:wrap}
+.au-btn{display:inline-block;background:var(--st-accent);color:#fff;border-radius:980px;padding:12px 23px;font-size:17px;font-weight:500;text-decoration:none;border:0;cursor:pointer}
+.au-btn:hover{filter:brightness(1.25)}
+.au-lnk{background:none;border:0;padding:0;color:var(--st-link);font-size:17px;text-decoration:none;cursor:pointer}
+.au-lnk::after{content:"\00a0›"}
+.au-lnk:hover{text-decoration:underline}
+.au-phones{display:flex;justify-content:center;align-items:flex-start;margin-top:clamp(40px,6vw,64px);height:clamp(300px,52vw,560px)}
+.au-hp{flex:none;border:0;padding:0;background:none;cursor:pointer;width:27%;max-width:290px;margin:0 -2.5%;transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.au-hp img{display:block;width:100%;height:auto;filter:drop-shadow(0 28px 50px rgba(0,0,0,.2))}
+.au-hp.au-c{width:31%;max-width:330px;z-index:2}
+.au-hp.au-l{transform:translateY(12%) rotate(-5deg)}
+.au-hp.au-r{transform:translateY(12%) rotate(5deg)}
+.au-hp.au-l:hover{transform:translateY(9%) rotate(-5deg)}.au-hp.au-r:hover{transform:translateY(9%) rotate(5deg)}.au-hp.au-c:hover{transform:translateY(-3%)}
+
+/* sections */
+.au-sec{padding-block:clamp(72px,10vw,120px)}
+.au-sec.au-white{background:var(--st-card)}
+.au-kicker{font-size:15px;font-weight:600;color:var(--st-ink2);margin:0 0 12px}
+.au-h2{font-size:clamp(34px,5.2vw,56px);line-height:1.06;font-weight:700;letter-spacing:-.035em;margin:0;text-wrap:balance}
+.au-h2 span{color:var(--st-ink3)}
+.au-split{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(28px,6vw,80px);align-items:end}
+.au-split p{margin:0;font-size:clamp(17px,1.7vw,21px);line-height:1.45;color:var(--st-ink2);letter-spacing:-.01em}
+.au-split p b{color:var(--st-ink);font-weight:600}
+.au-split p + p{margin-top:16px}
+.au-stats{display:grid;grid-template-columns:repeat(3,1fr);margin-top:clamp(48px,7vw,80px);border-top:1px solid var(--st-hair)}
+.au-stat{padding:28px 20px 0 0}
+.au-stat b{display:block;font-size:clamp(40px,5.5vw,64px);font-weight:700;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+.au-stat span{display:block;font-size:15px;color:var(--st-ink2);margin-top:10px;max-width:22ch}
+.au-notes{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(20px,3vw,40px);margin-top:clamp(48px,7vw,72px)}
+.au-note h3{font-size:19px;font-weight:600;letter-spacing:-.015em;margin:0 0 8px}
+.au-note p{margin:0;font-size:15.5px;line-height:1.5;color:var(--st-ink2)}
+.au-note .au-ic{width:36px;height:36px;border-radius:10px;background:var(--st-ground);display:grid;place-items:center;margin-bottom:16px}
+.au-note .au-ic svg{width:19px;height:19px;stroke:var(--st-accent);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* ideas */
+.au-ideas-h{margin-bottom:clamp(32px,5vw,48px)}
+.au-list{background:var(--st-card);border-radius:28px;padding-inline:clamp(20px,4vw,44px)}
+.au-idea{display:grid;grid-template-columns:56px 1fr 220px;gap:20px;align-items:start;padding-block:clamp(26px,3.5vw,36px);border-top:1px solid var(--st-hair)}
+.au-idea:first-child{border-top:0}
+.au-idea .au-num{font-size:15px;font-weight:600;color:var(--st-ink3);font-variant-numeric:tabular-nums;padding-top:6px}
+.au-idea h3{font-size:clamp(21px,2.4vw,26px);line-height:1.2;font-weight:600;letter-spacing:-.022em;margin:0 0 8px}
+.au-idea p{margin:0 0 12px;font-size:17px;line-height:1.5;color:var(--st-ink2);max-width:58ch}
+.au-idea p code{font:600 15px ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--st-ink);background:var(--st-ground);padding:2px 7px;border-radius:6px}
+.au-idea .au-lnk{font-size:15px}
+.au-imp{text-align:right}
+.au-imp .au-v{font-size:clamp(30px,3.6vw,40px);font-weight:700;letter-spacing:-.035em;line-height:1;font-variant-numeric:tabular-nums;color:var(--st-accent)}
+.au-imp .au-l{font-size:13.5px;color:var(--st-ink2);margin-top:8px}
+.au-band{margin-top:20px;background:var(--st-accent);color:#fff;border-radius:28px;padding:clamp(32px,5vw,56px);display:grid;grid-template-columns:1fr auto;gap:clamp(28px,5vw,64px);align-items:center}
+.au-band .au-k{font-size:15px;font-weight:600;color:rgba(255,255,255,.62);margin:0 0 10px}
+.au-band h3{font-size:clamp(24px,3vw,32px);line-height:1.18;font-weight:600;letter-spacing:-.022em;margin:0;text-wrap:balance}
+.au-band .au-fn{font-size:13px;line-height:1.5;color:rgba(255,255,255,.55);margin:16px 0 0;max-width:52ch}
+.au-nums{display:flex;gap:clamp(28px,4vw,48px)}
+.au-nums small{display:block;font-size:13px;color:rgba(255,255,255,.62)}
+.au-nums b{display:block;font-size:clamp(48px,6.5vw,76px);font-weight:700;letter-spacing:-.045em;line-height:1;color:var(--st-hi);font-variant-numeric:tabular-nums;margin:4px 0 8px}
+.au-nums span{font-size:14px;color:rgba(255,255,255,.8)}
+.au-band .au-btn{background:var(--st-hi);color:var(--st-accent);font-weight:600;margin-top:26px}
+
+/* prototype */
+.au-proto-h{text-align:center;max-width:720px;margin:0 auto}
+.au-proto-h p{font-size:clamp(17px,1.7vw,21px);color:var(--st-ink2);margin:14px 0 0}
+.au-seg{display:flex;gap:4px;justify-content:center;margin:clamp(28px,4vw,40px) auto 0;padding:4px;background:var(--st-ground);border-radius:980px;width:max-content;max-width:100%;overflow-x:auto;scrollbar-width:none}
+.au-seg::-webkit-scrollbar{display:none}
+.au-chip{flex:none;display:inline-flex;align-items:center;gap:6px;background:none;border:0;color:var(--st-ink2);font-size:13.5px;font-weight:500;padding:8px 14px;border-radius:980px;cursor:pointer;white-space:nowrap}
+.au-chip:hover{color:var(--st-ink)}
+.au-chip.on{background:var(--st-card);color:var(--st-ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.au-chip i{font-style:normal;font-size:11px;font-weight:700;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;background:var(--st-hi);color:var(--st-accent)}
+.au-stage{display:grid;grid-template-columns:auto minmax(0,420px);gap:clamp(32px,6vw,72px);justify-content:center;align-items:center;margin-top:clamp(28px,4vw,44px)}
+.phone{width:390px;height:844px;border-radius:56px;padding:10px;background:#0b0d10;box-shadow:0 0 0 1.5px #3a3d42,0 40px 90px rgba(0,0,0,.25);max-width:calc(100vw - 44px)}
+.phone-in{position:relative;width:100%;height:100%;border-radius:46px;overflow:hidden;background:var(--b-bg)}
+.island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:120px;height:34px;border-radius:20px;background:#000;z-index:9}
+.sbar{position:absolute;top:0;left:0;right:0;height:52px;display:flex;justify-content:space-between;align-items:center;padding:4px 32px 0;font:600 15px -apple-system,system-ui,sans-serif;color:var(--b-ink);z-index:8;pointer-events:none}
+.au-pn{background:var(--st-ground);border-radius:28px;padding:clamp(26px,3.5vw,38px)}
+.au-pn-k{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--st-ink)}
+.au-pn-k i{width:8px;height:8px;border-radius:50%;background:var(--st-hi);box-shadow:0 0 0 3px var(--st-mark)}
+.au-pn-k.au-ctx{color:var(--st-ink2)}.au-pn-k.au-ctx i{background:var(--st-ink3);box-shadow:none}
+.au-pn-t{font-size:clamp(24px,2.6vw,30px);line-height:1.12;font-weight:700;letter-spacing:-.028em;margin:10px 0 14px;text-wrap:balance}
+.au-pn-h{margin:0;font-size:17px;line-height:1.55;color:var(--st-ink2)}
+.au-pn-h b{color:var(--st-ink);font-weight:600}
+.au-pn-o{margin-top:24px;padding-top:22px;border-top:1px solid var(--st-hair)}
+.au-pn-o .au-lab{font-size:13px;font-weight:600;color:var(--st-ink3)}
+.au-pn-o .au-val{font-size:clamp(38px,4.4vw,50px);font-weight:700;letter-spacing:-.04em;line-height:1.05;color:var(--st-accent);margin-top:6px;font-variant-numeric:tabular-nums}
+.au-pn-o .au-sub{font-size:14px;color:var(--st-ink2);margin-top:4px}
+.au-pn-a{margin:18px 0 0;font-size:14px;line-height:1.5;color:var(--st-ink2)}
+.au-pn-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:28px;padding-top:18px;border-top:1px solid var(--st-hair);font-size:13px;color:var(--st-ink3)}
+.au-pn-nav button{background:var(--st-card);border:0;border-radius:980px;padding:8px 15px;font-size:14px;font-weight:500;color:var(--st-ink);cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.au-pn-nav button:disabled{opacity:.35;cursor:default}
+.au-hint{text-align:center;font-size:14px;color:var(--st-ink3);margin:22px 0 0}
+
+/* footer */
+.au-foot{padding-block:56px 72px;border-top:1px solid var(--st-hair)}
+.au-foot details{border-bottom:1px solid var(--st-hair);padding-bottom:18px}
+.au-foot summary{cursor:pointer;font-size:17px;font-weight:600;list-style:none;display:flex;justify-content:space-between;align-items:center}
+.au-foot summary::-webkit-details-marker{display:none}
+.au-foot summary::after{content:"+";font-size:24px;font-weight:300;color:var(--st-ink2)}
+.au-foot details[open] summary::after{content:"−"}
+.au-srcs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 48px;margin-top:18px}
+.au-srcs h4{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--st-ink3);margin:18px 0 6px}
+.au-srcs dl{margin:0}.au-srcs dt{font-size:14.5px;font-weight:600;margin-top:10px}
+.au-srcs dd{margin:3px 0 0;font-size:14px;line-height:1.5;color:var(--st-ink2)}
+.au-fine{font-size:12.5px;line-height:1.6;color:var(--st-ink3);margin:22px 0 0;max-width:80ch}
+.au-cta-line{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;margin-top:36px}
+.au-cta-line p{margin:0;font-size:clamp(19px,2.2vw,24px);font-weight:600;letter-spacing:-.02em;max-width:34ch}
+
+@media (max-width:900px){
+  .au-split,.au-band{grid-template-columns:1fr}
+  .au-notes{grid-template-columns:1fr}
+  .au-idea{grid-template-columns:40px 1fr}
+  .au-imp{grid-column:2;text-align:left;display:flex;align-items:baseline;gap:10px}
+  .au-imp .au-l{margin:0}
+  .au-imp .au-v{white-space:nowrap}
+  .au-stage{grid-template-columns:1fr;justify-items:center}
+  .au-pn{width:100%;max-width:520px}
+  .au-srcs{grid-template-columns:1fr}
+}
+@media (max-width:560px){.au-stats{grid-template-columns:1fr}.au-stat{padding:22px 0 0}.au-nums{flex-direction:column;gap:18px}}
+
+/* ================= extras (audit side): video, language, phone view + QR, paywall today vs proposed, ?tour ================= */
+[hidden]{display:none!important}
+/* the device never scrolls: off-screen slides would otherwise make it scrollable by focus / scrollIntoView */
+.phone-in,.scr{overflow:clip}
+/* hero: walkthrough link */
+.au-play::before{content:"▶";font-size:.72em;margin-right:7px;position:relative;top:-1px}
+/* video dialog */
+.au-vid{border:0;padding:0;background:transparent;max-width:min(1120px,94vw);width:100%;overflow:visible}
+.au-vid::backdrop{background:rgba(0,0,0,.74);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.au-vid-in{background:#000;border-radius:18px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.4)}
+.au-vid video{display:block;width:100%;aspect-ratio:16/9;background:#000}
+.au-vid-bar{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 4px 0;font-size:14px}
+.au-vid-bar a{color:#fff;opacity:.85}
+.au-vid-x{background:rgba(255,255,255,.16);border:0;color:#fff;border-radius:980px;padding:8px 16px;font-size:14px;cursor:pointer}
+/* language switch */
+.au-langrow{display:flex;justify-content:center;align-items:center;gap:12px;margin:18px 0 0;font-size:13.5px;color:var(--st-ink2);flex-wrap:wrap}
+.au-lsw{display:inline-flex;gap:2px;padding:3px;background:var(--st-ground);border-radius:980px}
+.au-lsw button{border:0;background:none;padding:6px 13px;border-radius:980px;font-size:13.5px;font-weight:500;color:var(--st-ink2);cursor:pointer;white-space:nowrap}
+.au-lsw button.on{background:var(--st-card);color:var(--st-ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+/* QR card (desktop) / full-screen button (phone) */
+.au-qr{display:flex;align-items:center;gap:18px;margin:26px auto 0;max-width:500px;background:var(--st-ground);border-radius:22px;padding:14px 22px 14px 14px}
+.au-qr img{width:112px;height:112px;border-radius:12px;image-rendering:pixelated;flex:none;background:#fff}
+.au-qr b{display:block;font-size:17px;font-weight:600;letter-spacing:-.01em}
+.au-qr p{margin:4px 0 0;font-size:14.5px;line-height:1.45;color:var(--st-ink2)}
+.au-mobw{display:none;text-align:center;margin-top:22px}
+@media (max-width:900px){.au-qr{display:none}.au-mobw{display:block}}
+/* paywall: today vs proposed */
+.au-cmp{display:grid;grid-template-columns:minmax(0,290px) minmax(0,1fr) minmax(0,290px);gap:clamp(24px,4vw,52px);align-items:center;margin-top:clamp(32px,5vw,52px)}
+.au-cmp figure{margin:0;text-align:center}
+.au-cmp figure img{display:block;width:100%;height:auto;filter:drop-shadow(0 24px 44px rgba(0,0,0,.18))}
+.au-cmp figcaption{margin-top:14px;font-size:15px;font-weight:600}
+.au-cmp figcaption span{color:var(--st-ink2);font-weight:400}
+.au-cmp-go{border:0;padding:0;background:none;cursor:pointer;display:block;width:100%;transition:transform .3s}
+.au-cmp-go:hover{transform:translateY(-4px)}
+.au-chg{list-style:none;margin:0;background:var(--st-card);border-radius:24px;padding:4px clamp(18px,2.4vw,28px)}
+.au-chg li{padding:15px 0;border-top:1px solid var(--st-hair)}
+.au-chg li:first-child{border-top:0}
+.au-chg h4{margin:0 0 7px;font-size:16px;font-weight:600;letter-spacing:-.01em;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.au-chg h4 i{font-style:normal;font-size:12px;font-weight:600;color:var(--st-accent);background:var(--st-mark);border-radius:6px;padding:2px 8px;white-space:nowrap}
+.au-was,.au-now{display:grid;grid-template-columns:78px 1fr;gap:8px;font-size:14.5px;line-height:1.42}
+.au-was{color:var(--st-ink3)}
+.au-now{color:var(--st-ink);margin-top:3px}
+.au-was em,.au-now em{font-style:normal;font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding-top:2px}
+.au-now em{color:var(--st-link)}
+.au-kept{margin:22px 0 0;font-size:14px;color:var(--st-ink2);text-align:center}
+@media (max-width:900px){.au-cmp{grid-template-columns:1fr 1fr;gap:18px}.au-chg{grid-column:1 / -1;order:3}.au-was,.au-now{grid-template-columns:70px 1fr}}
+
+/* ?app — the prototype full screen on a real phone, with a bar that opens the idea panel */
+html.appmode,html.appmode body{height:100%;overflow:hidden;background:#000}
+html.appmode .au-nav,html.appmode .au-top-hero,html.appmode #why,html.appmode #ideas,html.appmode #compare,html.appmode .au-foot,
+html.appmode .au-proto-h,html.appmode #prototype .au-langrow,html.appmode #chips,html.appmode .au-hint,html.appmode .au-qr,html.appmode .au-mobw{display:none!important}
+html.appmode #prototype{padding:0;background:#000}
+html.appmode #prototype .au-wrap{padding:0;max-width:none}
+html.appmode .au-stage{display:block;margin:0}
+html.appmode .phone{position:fixed;top:0;left:0;right:0;margin:0 auto;width:min(100%,480px);height:calc(100% - 56px - env(safe-area-inset-bottom,0px));max-width:none;border-radius:0;padding:0;box-shadow:none;background:#000}
+html.appmode .phone-in{border-radius:0}
+html.appmode .island,html.appmode .sbar{display:none}
+html.appmode .scr .s-pad{padding-top:max(58px,calc(env(safe-area-inset-top,0px) + 16px))}
+html.appmode .scr .s-x,html.appmode .scr .s-lang{top:max(54px,calc(env(safe-area-inset-top,0px) + 10px))}
+.au-appbar,.au-scrim{display:none}
+html.appmode .au-appbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:70;height:calc(56px + env(safe-area-inset-bottom,0px));padding:0 12px env(safe-area-inset-bottom,0px) 16px;align-items:center;gap:12px;background:#0b0b0c;border-top:1px solid rgba(255,255,255,.1);color:#fff}
+.au-ab-why{flex:1;min-width:0;display:flex;align-items:center;gap:9px;background:none;border:0;color:#fff;font-size:14px;font-weight:500;text-align:left;cursor:pointer;padding:0}
+.au-ab-why i{width:8px;height:8px;border-radius:50%;background:var(--st-hi);flex:none}
+.au-ab-why span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.au-ab-why em{font-style:normal;color:rgba(255,255,255,.6);margin-left:auto;flex:none;font-size:13px}
+.au-appbar .au-lsw{background:rgba(255,255,255,.12)}
+.au-appbar .au-lsw button{color:rgba(255,255,255,.75);padding:5px 11px}
+.au-appbar .au-lsw button.on{background:#fff;color:#000}
+html.appmode #panel{position:fixed;left:0;right:0;bottom:0;z-index:80;max-width:none;width:auto;margin:0 auto;border-radius:24px 24px 0 0;max-height:78%;overflow:auto;transform:translateY(105%);transition:transform .3s cubic-bezier(.3,.7,.2,1);padding-bottom:calc(26px + env(safe-area-inset-bottom,0px))}
+html.appmode.au-open #panel{transform:none}
+html.appmode.au-open .au-scrim{display:block;position:fixed;inset:0;z-index:75;background:rgba(0,0,0,.5)}
+
+/* ?tour — 1280×720 walkthrough frames (record-video.sh renders them into assets/walkthrough.mp4) */
+.au-tour{display:none}
+html.tourmode,html.tourmode body{overflow:hidden;background:var(--st-ground)}
+html.tourmode body *{visibility:hidden}
+html.tourmode .phone,html.tourmode .phone *,html.tourmode .au-tour,html.tourmode .au-tour *{visibility:visible}
+html.tourmode .phone{position:fixed;left:170px;top:44px;margin:0;transform:scale(.755);transform-origin:0 0;box-shadow:0 0 0 1.5px #3a3d42,0 34px 80px rgba(0,0,0,.22);z-index:5;max-width:none}
+html.tourmode .au-tour{display:block;position:fixed;inset:0;z-index:6;pointer-events:none;color:var(--st-ink)}
+.au-tb{position:absolute;left:590px;top:30px;display:flex;align-items:center;gap:10px;font-size:16px;font-weight:600}
+.au-tb img{width:26px;height:26px;border-radius:7px}
+.au-tb small{font-size:16px;font-weight:400;color:var(--st-ink2)}
+.au-tby{position:absolute;right:48px;top:32px;font-size:14px;color:var(--st-ink3)}
+.au-tcap{position:absolute;left:590px;right:60px;top:50%;transform:translateY(-50%)}
+.au-tk{display:flex;align-items:center;gap:9px;font-size:17px;font-weight:600}
+.au-tk i{width:9px;height:9px;border-radius:50%;background:var(--st-hi);box-shadow:0 0 0 3px var(--st-mark)}
+.au-tk.au-ctx{color:var(--st-ink2)}.au-tk.au-ctx i{background:var(--st-ink3);box-shadow:none}
+.au-tt{font-size:46px;line-height:1.06;font-weight:700;letter-spacing:-.035em;margin:14px 0 14px;text-wrap:balance}
+.au-tl{font-size:23px;line-height:1.36;color:var(--st-ink2);letter-spacing:-.01em;margin:0;max-width:28ch}
+.au-to{margin-top:28px;padding-top:22px;border-top:1px solid var(--st-hair)}
+.au-to small{display:block;font-size:14px;font-weight:600;color:var(--st-ink3)}
+.au-to b{display:inline-block;font-size:62px;font-weight:700;letter-spacing:-.045em;line-height:1.08;color:var(--st-accent);margin-top:4px}
+.au-to span{display:block;font-size:16px;color:var(--st-ink2);margin-top:2px}
+.au-tprog{position:absolute;left:48px;right:48px;bottom:22px;height:4px;border-radius:3px;background:var(--st-hair);overflow:hidden}
+.au-tprog i{display:block;height:100%;background:var(--st-hi)}
+.au-ttap{position:absolute;left:0;top:0;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:rgba(255,255,255,.5);box-shadow:0 0 0 2.5px rgba(255,255,255,.9),0 6px 16px rgba(0,0,0,.35);opacity:0}
+.au-tintro,.au-tend{position:absolute;inset:0;background:var(--st-ground);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;opacity:0}
+.au-tintro .au-lede{margin-top:18px}
+.au-te-h{font-size:46px;line-height:1.08;font-weight:700;letter-spacing:-.035em;margin:0;max-width:18ch;text-wrap:balance}
+.au-te-n{display:flex;gap:64px;margin-top:30px}
+.au-te-n small{display:block;font-size:14px;color:var(--st-ink2)}
+.au-te-n b{display:block;font-size:76px;font-weight:700;letter-spacing:-.045em;line-height:1;color:var(--st-accent);margin:4px 0 6px}
+.au-te-n span{font-size:15px;color:var(--st-ink2)}
+.au-te-q{display:flex;align-items:center;gap:18px;margin-top:34px;background:var(--st-card);border-radius:20px;padding:12px 24px 12px 12px;text-align:left}
+.au-te-q img{width:104px;height:104px;border-radius:10px;image-rendering:pixelated}
+.au-te-q b{display:block;font-size:18px;font-weight:600}
+.au-te-q span{display:block;font-size:15px;color:var(--st-link);margin-top:3px}
+.au-te-f{position:absolute;bottom:44px;left:0;right:0;font-size:13px;color:var(--st-ink3);margin:0}
+
+/* offer switch in the paywall panel (Build card: three offers on one paywall) */
+.au-var{font:600 13px var(--st-font);border:1px solid var(--st-hair);background:var(--st-card);color:var(--st-ink);border-radius:980px;padding:6px 12px;margin:0 6px 8px 0;cursor:pointer}
+.au-var:hover{border-color:var(--st-ink3)}
+.au-var.on{background:var(--st-accent);color:#fff;border-color:var(--st-accent)}
+
+/* ---------- screen engine (layout only, no colours) ---------- */
+.scr{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--b-bg);color:var(--b-ink);font-family:var(--b-font);
+     transform:translateX(100%);transition:transform .32s cubic-bezier(.3,.7,.2,1);overflow:hidden;text-align:left;line-height:normal;font-size:16px}
+.scr.is-active{transform:none;z-index:2}.scr.is-past{transform:translateX(-28%)}.scr.under{transform:none;z-index:1}
+.scr.sheet{transform:translateY(100%)}.scr.sheet.is-active{transform:none}
+.nofx,.nofx *{transition:none!important}
+.shot .scr{transition:none!important}
+/* ?phone — just the device at (10,10), for shoot.sh and hero-stills.sh (&clear = transparent ground) */
+.phoneonly body{background:#141615}
+.phoneonly.clear body{background:transparent}
+.phoneonly body *{visibility:hidden}
+.phoneonly .phone,.phoneonly .phone *{visibility:visible}
+.phoneonly .phone{position:fixed;top:10px;left:10px;z-index:99;box-shadow:none;max-width:none;margin:0}
+
+/* SCREENS:START — styles for the app's screens. RULE: colours only via var(--b-*), or white/black
+   with alpha (scrims, shadows). RULE: no class name that the audit page above already uses
+   (.hero .btn .chip .list .idea .note .stat .band .num .hint .display .split …) — brand-check refuses collisions. */
+.vu-pad{flex:1;display:flex;flex-direction:column;padding:60px 18px 26px;gap:14px;position:relative;z-index:1;min-height:0}
+.vu-scroll{overflow:auto;scrollbar-width:none}.vu-scroll::-webkit-scrollbar{display:none}
+.vu-logo{height:28px;width:auto;display:block;flex:none}
+.vu-h1{font:700 27px/1.16 var(--b-font);margin:0;color:var(--b-ink);letter-spacing:-.01em}
+.vu-h2{font:700 21px/1.22 var(--b-font);margin:0;color:var(--b-ink)}
+.vu-sub{font:400 15px/1.45 var(--b-font);color:var(--b-ink2);margin:0}
+.vu-y{color:var(--b-primary)}
+.vu-cta{width:100%;border:0;border-radius:var(--b-pill);background:var(--b-primary);color:var(--b-primary-ink);font:700 17px var(--b-font);padding:16px 14px;cursor:pointer;flex:none}
+.vu-cta[disabled]{opacity:.35}
+.vu-ghost{background:none;border:0;color:var(--b-ink2);font:600 14px var(--b-font);padding:6px;cursor:pointer;align-self:center}
+.vu-top{display:flex;align-items:center;gap:12px;min-height:30px}
+.vu-back{background:none;border:0;color:var(--b-ink);padding:0;width:28px;height:28px;cursor:pointer;flex:none}
+.vu-svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.vu-dots{display:flex;gap:5px;margin-left:auto}.vu-dots i{width:18px;height:4px;border-radius:2px;background:var(--b-line)}.vu-dots i.vu-d{background:var(--b-primary)}
+/* welcome */
+.vu-wallimg{position:absolute;inset:0;width:100%;height:76%;object-fit:cover;object-position:top;opacity:.62}
+.vu-fade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05) 0%,rgba(0,0,0,.35) 34%,var(--b-bg) 70%)}
+.vu-pill{position:absolute;top:56px;right:16px;z-index:3;border:1px solid rgba(255,255,255,.4);border-radius:999px;padding:6px 12px;font:600 13px var(--b-font);color:var(--b-ink);background:rgba(0,0,0,.55);cursor:pointer}
+.vu-welcome{justify-content:flex-end;gap:12px}
+.vu-welcome .vu-logo{height:44px;margin-bottom:6px}
+.vu-welcome .vu-h1{font-size:31px}
+.vu-tiny{font:400 12px var(--b-font);color:var(--b-ink2);margin:0;text-align:center}
+/* language */
+.vu-opt{display:flex;align-items:center;gap:12px;width:100%;background:var(--b-surface);border:1.5px solid transparent;border-radius:var(--b-radius);padding:17px 16px;color:var(--b-ink);font:600 17px var(--b-font);text-align:left;cursor:pointer}
+.vu-opt small{display:block;font:400 13px var(--b-font);color:var(--b-ink2);margin-top:3px}
+.vu-opt .vu-ck{margin-left:auto;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--b-line);flex:none;display:grid;place-items:center}
+.vu-opt.on{border-color:var(--b-primary)}
+.vu-opt.on .vu-ck{background:var(--b-primary);border-color:var(--b-primary)}
+.vu-opt.on .vu-ck::after{content:"";width:9px;height:5px;border:2.5px solid var(--b-primary-ink);border-top:0;border-right:0;transform:translateY(-1px) rotate(-45deg)}
+.vu-note{font:400 13px/1.45 var(--b-font);color:var(--b-ink2);margin:0}
+/* genres */
+.vu-gens{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.vu-gen{position:relative;border:2px solid transparent;border-radius:12px;padding:0;overflow:hidden;background:var(--b-surface);cursor:pointer;aspect-ratio:3/4;display:block;color:var(--b-ink)}
+.vu-gen img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.75}
+.vu-gen>span{position:absolute;left:0;right:0;bottom:0;padding:26px 10px 10px;background:linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,.85));font:700 15px var(--b-font);text-align:left}
+.vu-gen .vu-ck{position:absolute;top:8px;right:8px;width:24px;height:24px;border-radius:50%;border:2px solid rgba(255,255,255,.85);background:rgba(0,0,0,.35);display:grid;place-items:center}
+.vu-gen.on{border-color:var(--b-primary)}
+.vu-gen.on img{opacity:1}
+.vu-gen.on .vu-ck{background:var(--b-primary);border-color:var(--b-primary)}
+.vu-gen.on .vu-ck::after{content:"";width:10px;height:5px;border:2.5px solid var(--b-primary-ink);border-top:0;border-right:0;transform:translateY(-1px) rotate(-45deg)}
+.vu-count{font:600 13px var(--b-font);color:var(--b-ink2);text-align:center;margin:0}
+/* home / picks */
+.vu-head{display:flex;align-items:center;gap:16px;padding:0 2px}
+.vu-head .vu-logo{margin-right:auto}
+.vu-hi{display:flex;flex-direction:column;align-items:center;gap:2px;font:400 10px var(--b-font);color:var(--b-ink)}
+.vu-hi .vu-svg{width:21px;height:21px}
+.vu-feat{display:flex;gap:14px;align-items:stretch}
+.vu-feat img{width:132px;height:188px;object-fit:cover;border-radius:6px;flex:none}
+.vu-feat>div{display:flex;flex-direction:column;gap:8px;min-width:0;padding:4px 0}
+.vu-tag{align-self:flex-start;background:var(--b-primary);color:var(--b-primary-ink);font:700 12px var(--b-font);padding:4px 8px;border-radius:2px}
+.vu-ft{font:400 22px/1.15 var(--b-font);color:var(--b-ink);margin:0}
+.vu-meta{font:400 13px var(--b-font);color:var(--b-ink);margin:0}
+.vu-meta .vu-y{margin-right:4px}
+.vu-play{margin-top:auto;display:flex;align-items:center;justify-content:center;gap:6px;border:0;border-radius:var(--b-pill);background:var(--b-primary);color:var(--b-primary-ink);font:700 15px var(--b-font);padding:12px 10px;cursor:pointer}
+.vu-play .vu-svg{width:16px;height:16px;fill:currentColor;stroke:none}
+.vu-because{font:600 13px var(--b-font);color:var(--b-ink2);margin:2px 0 -4px}
+.vu-rows{display:flex;flex-direction:column;gap:14px}
+.vu-rh{font:700 16px var(--b-font);color:var(--b-ink);margin:0 0 8px;display:flex;align-items:center;gap:6px}
+.vu-rh::after{content:"›";color:var(--b-primary);font-weight:700}
+.vu-strip{display:flex;gap:8px}
+.vu-strip figure{margin:0;width:104px;flex:none}
+.vu-strip img{width:104px;height:146px;object-fit:cover;border-radius:4px;display:block}
+.vu-strip figcaption{font:400 12px var(--b-font);color:var(--b-ink);margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* player */
+.vu-video{position:relative;margin-top:52px;width:100%;aspect-ratio:16/9;background:var(--b-bg);overflow:hidden;flex:none}
+.vu-video>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:blur(1.5px) brightness(.38)}
+.vu-adk{position:absolute;top:10px;left:10px;background:var(--b-primary);color:var(--b-primary-ink);font:700 12px var(--b-font);padding:3px 8px;border-radius:2px}
+.vu-adt{position:absolute;top:10px;right:10px;font:600 12px var(--b-font);color:var(--b-ink);background:rgba(0,0,0,.6);padding:3px 8px;border-radius:10px}
+.vu-admsg{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;font:600 14px/1.35 var(--b-font);color:var(--b-ink);padding:0 30px}
+.vu-admsg small{display:block;font:400 12px var(--b-font);color:var(--b-ink2);margin-top:4px}
+.vu-bar{position:absolute;left:0;right:0;bottom:0;height:3px;background:rgba(255,255,255,.25)}.vu-bar i{display:block;height:100%;width:22%;background:var(--b-primary)}
+.vu-info{display:flex;align-items:flex-start;gap:14px;padding:14px 18px 12px}
+.vu-info>div{flex:1;min-width:0}
+.vu-info b{display:block;font:400 19px var(--b-font);color:var(--b-ink)}
+.vu-info small{font:400 13px var(--b-font);color:var(--b-ink)}
+.vu-prem{margin:0 14px;border:1.5px solid var(--b-primary);border-radius:var(--b-radius);padding:14px;display:flex;flex-direction:column;gap:10px;background:var(--b-surface)}
+.vu-prem h3{font:700 17px/1.25 var(--b-font);margin:0;color:var(--b-ink)}
+.vu-prem p{font:400 13.5px/1.4 var(--b-font);margin:0;color:var(--b-ink2)}
+.vu-prem .vu-cta{padding:13px;font-size:16px}
+.vu-prem .vu-ghost{padding:2px;font-size:13px}
+.vu-eps{margin-top:12px;background:var(--b-surface2);flex:1;padding:14px 18px;display:flex;flex-direction:column;gap:12px}
+.vu-eph{display:flex;justify-content:space-between;align-items:center;font:700 15px var(--b-font);color:var(--b-primary)}
+.vu-ep{display:flex;gap:12px;align-items:center}
+.vu-ep img{width:112px;height:63px;object-fit:cover;border-radius:2px;flex:none}
+.vu-ep span{flex:1;font:400 13px var(--b-font);color:var(--b-ink)}
+.vu-ep em{font-style:normal;font:700 10px var(--b-font);color:var(--b-primary-ink);background:var(--b-primary);padding:2px 5px;border-radius:2px;margin-left:6px}
+/* free vs premium */
+.vu-tbl{display:grid;grid-template-columns:1.25fr .9fr 1fr;background:var(--b-surface2);border-radius:var(--b-radius);overflow:hidden}
+.vu-tbl>*{padding:17px 10px;font:400 15px/1.3 var(--b-font);color:var(--b-ink);border-top:1px solid rgba(255,255,255,.07);display:flex;align-items:center}
+.vu-tbl>.vu-th{border-top:0;font:700 12px var(--b-font);color:var(--b-ink2);text-transform:uppercase;letter-spacing:.04em}
+.vu-tbl>.vu-thp{color:var(--b-primary-ink);background:var(--b-primary);justify-content:center}
+.vu-tbl>.vu-c{justify-content:center;text-align:center;color:var(--b-ink2)}
+.vu-tbl>.vu-p{justify-content:center;text-align:center;font-weight:700;color:var(--b-primary);background:rgba(255,255,255,.03)}
+.vu-rate{display:flex;align-items:center;gap:16px;border-radius:var(--b-radius);background:var(--b-surface);padding:20px 18px}
+.vu-rate b{font:700 44px var(--b-font);color:var(--b-ink);line-height:1}
+.vu-rate span{display:flex;flex-direction:column;gap:3px;font:400 13px var(--b-font);color:var(--b-ink2)}
+.vu-stars{color:var(--b-primary);font-size:16px;letter-spacing:2px}
+/* paywall */
+.vu-x{position:absolute;top:56px;right:16px;z-index:4;background:rgba(255,255,255,.12);border:0;border-radius:50%;width:32px;height:32px;display:grid;place-items:center;color:var(--b-ink);cursor:pointer}
+.vu-x .vu-svg{width:18px;height:18px}
+.vu-pw{gap:10px;padding-top:232px}
+.vu-pwhero{position:absolute;z-index:0;top:0;left:0;right:0;height:300px;display:flex;gap:4px;justify-content:center;overflow:hidden}
+.vu-pwhero img{width:136px;height:300px;object-fit:cover;flex:none;filter:brightness(.7)}
+.vu-pwhero img:first-child{order:2;width:150px;filter:none}
+.vu-pwhero img:nth-child(2){order:1}.vu-pwhero img:nth-child(3){order:3}
+.vu-pwfade{position:absolute;top:0;left:0;width:100%;height:100%;z-index:2;background:linear-gradient(180deg,rgba(0,0,0,.1) 0%,rgba(0,0,0,.2) 30%,rgba(0,0,0,.85) 62%,var(--b-bg) 80%)}
+.vu-brandrow{display:flex;align-items:center;gap:8px}
+.vu-brandrow .vu-logo{height:26px}
+.vu-ptag{font:800 11px var(--b-font);letter-spacing:.12em;color:var(--b-primary-ink);background:var(--b-primary);padding:3px 7px;border-radius:2px}
+.vu-pw .vu-h1{font-size:25px}
+.vu-pw .vu-sub{font-size:14px}
+.vu-bens{display:flex;gap:6px}
+.vu-ben{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;background:var(--b-surface);border-radius:10px;padding:10px 4px;font:600 11.5px/1.2 var(--b-font);color:var(--b-ink);text-align:center}
+.vu-ben .vu-svg{color:var(--b-primary);width:20px;height:20px}
+.vu-plans{display:flex;flex-direction:column;gap:8px}
+.vu-plan{position:relative;display:flex;align-items:center;gap:12px;width:100%;background:var(--b-surface);border:1.5px solid var(--b-line);border-radius:12px;padding:12px 14px;color:var(--b-ink);cursor:pointer;text-align:left;font-family:var(--b-font)}
+.vu-plan.on{border-color:var(--b-primary);background:var(--b-surface2)}
+.vu-rad{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--b-line);flex:none}
+.vu-plan.on .vu-rad{border:6px solid var(--b-primary)}
+.vu-pl{display:flex;flex-direction:column;gap:2px;flex:1;min-width:0}
+.vu-pl b{font:700 16px var(--b-font)}
+.vu-pl small{font:400 12.5px var(--b-font);color:var(--b-ink2)}
+.vu-pr{font:700 17px var(--b-font);white-space:nowrap}
+.vu-save{position:absolute;top:-9px;right:12px;background:var(--b-primary);color:var(--b-primary-ink);font:800 10.5px var(--b-font);letter-spacing:.04em;padding:3px 7px;border-radius:2px}
+.vu-hl{font:600 13.5px/1.4 var(--b-font);color:var(--b-ink);margin:0;background:var(--b-surface2);border-left:3px solid var(--b-primary);padding:8px 10px;border-radius:0 8px 8px 0}
+.vu-tl{display:flex;flex-direction:column;gap:0;background:var(--b-surface);border-radius:12px;padding:12px 14px}
+.vu-st{display:flex;gap:12px;position:relative;padding-bottom:12px}
+.vu-st:last-child{padding-bottom:0}
+.vu-st::before{content:"";position:absolute;left:8px;top:20px;bottom:0;width:2px;background:var(--b-line)}
+.vu-st:last-child::before{display:none}
+.vu-st i{width:18px;height:18px;border-radius:50%;background:var(--b-primary);flex:none;margin-top:1px}
+.vu-st i.vu-o{background:var(--b-surface);border:2px solid var(--b-primary)}
+.vu-st div{display:flex;flex-direction:column;gap:1px}
+.vu-st b{font:700 14px var(--b-font);color:var(--b-ink)}
+.vu-st small{font:400 12.5px var(--b-font);color:var(--b-ink2)}
+.vu-proof{font:600 12.5px var(--b-font);color:var(--b-ink2);text-align:center;margin:0}
+.vu-proof .vu-stars{font-size:12px;letter-spacing:1px}
+.vu-terms{font:400 11.5px var(--b-font);color:var(--b-ink2);text-align:center;margin:-4px 0 0}
+.vu-legal{display:flex;justify-content:center;gap:16px;font:400 11.5px var(--b-font);color:var(--b-ink2)}
+.vu-ctaw{display:flex;flex-direction:column;gap:8px;margin-top:auto}
+/* offer on close */
+.vu-scrim{background:rgba(0,0,0,.62)}
+.vu-sheet{margin-top:auto;background:var(--b-surface2);border-radius:22px 22px 0 0;padding:16px 20px 30px;display:flex;flex-direction:column;gap:12px;position:relative;z-index:1}
+.vu-grab{width:40px;height:5px;border-radius:3px;background:var(--b-line);align-self:center}
+.vu-sheet .vu-x{top:14px;right:14px}
+.vu-ofimg{display:flex;gap:8px;justify-content:center}
+.vu-ofimg img{width:84px;height:118px;object-fit:cover;border-radius:4px}
+.vu-ofimg img:nth-child(2){transform:translateY(-6px);width:92px;height:128px}
+.vu-center{text-align:center}
+.vu-offer{display:flex;align-items:center;gap:12px;border:1.5px solid var(--b-primary);border-radius:12px;padding:14px;background:var(--b-surface)}
+/* done */
+.vu-ok{width:72px;height:72px;border-radius:50%;background:var(--b-primary);display:grid;place-items:center;align-self:center;margin-top:70px}
+.vu-ok .vu-svg{width:36px;height:36px;color:var(--b-primary-ink);stroke-width:3}
+.vu-dl{display:flex;align-items:center;gap:8px;font:400 13px var(--b-font);color:var(--b-ink);background:var(--b-surface2);padding:10px 12px;border-radius:8px}
+/* paywall TODAY (rebuilt from the App Store plan list) */
+.vu-trow{display:flex;justify-content:space-between;align-items:center;background:var(--b-surface);border:1px solid var(--b-line);border-radius:10px;padding:12px 14px;font:600 15px var(--b-font);color:var(--b-ink)}
+.vu-trow span:last-child{font-weight:700}
+.vu-tben{display:flex;gap:10px;align-items:center;font:400 14px var(--b-font);color:var(--b-ink)}
+.vu-tben .vu-svg{color:var(--b-primary);width:18px;height:18px}
+/* SCREENS:END */
+</style>
+</head>
+<body>
+
+<nav class="au-nav" aria-label="Sections">
+  <div class="au-nav-in">
+    <div class="au-brand">
+      <img src="assets/brand/appstore-icon.jpg" alt="">
+      <span>Growth Audit <small>· Viu</small></span>
+    </div>
+    <a class="au-opt" href="#why">Why this</a>
+    <a href="#ideas">Five ideas</a>
+    <a href="#prototype">Prototype</a>
+    <a class="au-opt" href="#compare" id="navCompare" hidden>Paywall</a>
+  </div>
+</nav>
+
+<header class="au-top-hero" id="top">
+  <div class="au-wrap">
+    <p class="au-eyebrow"><i></i>Growth Audit · October 2026</p>
+    <h1 class="au-display">Viu</h1>
+    <p class="au-lede">Five ideas to turn more viewers into Viu Premium subscribers. <span>Each one built into your own onboarding, so you can tap through it.</span></p>
+    <p class="au-byline">Prepared by Adapty for the Viu team</p>
+    <div class="au-ctas">
+      <a class="au-btn" href="#ideas">See the five ideas</a>
+      <a class="au-lnk" href="#prototype">Open the prototype</a>
+      <button type="button" class="au-lnk au-play" id="heroVideo" hidden>Watch the 30-second walkthrough</button>
+    </div>
+  </div>
+  <!-- filled from CONTENT.hero: three screen ids → assets/hero/<id>.png (make them with hero-stills.sh) -->
+  <div class="au-phones" id="heroPhones" aria-label="Three screens from the prototype"></div>
+</header>
+
+<section class="au-sec au-white" id="why">
+  <div class="au-wrap">
+    <div class="au-split">
+      <div>
+        <p class="au-kicker">Why you’re seeing this</p>
+        <h2 class="au-h2">30,000 subscription apps taught us what moves conversion. <span>Here’s what we’d test first at Viu.</span></h2>
+      </div>
+      <div>
+        <p>Adapty runs subscriptions for <b>more than 30,000 apps</b>, so we see which onboarding and paywall changes lift revenue across the whole market, not just inside one app.</p>
+        <p>We pointed that at Viu. We took <b>your own screens, copy and prices</b> from your App Store listing, your public reviews and viu.com, and rebuilt the path from install to paywall around the five ideas with the most potential.</p>
+      </div>
+    </div>
+    <div class="au-stats">
+      <div class="au-stat"><b>30,000+</b><span>apps run their subscriptions on Adapty</span></div>
+      <div class="au-stat"><b>5</b><span>ideas, each built as a working screen</span></div>
+      <div class="au-stat"><b>0</b><span>changes to your art direction</span></div>
+    </div>
+    <div class="au-notes">
+      <div class="au-note">
+        <div class="au-ic"><svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.4 6.8 19.1l1-5.8L3.5 9.2l5.9-.9z"/></svg></div>
+        <h3>Five ideas, not fifteen</h3>
+        <p>We’re not proposing to rebuild every screen. These are the changes with the highest potential, ranked by what we’d test first.</p>
+      </div>
+      <div class="au-note">
+        <div class="au-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17M3.5 12h17"/></svg></div>
+        <h3>Your design, not ours</h3>
+        <p>Every colour, control and price in the prototype is Viu’s. We changed the order and what gets shown.</p>
+      </div>
+      <div class="au-note">
+        <div class="au-ic"><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M20 12v6.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5v-13A1.5 1.5 0 0 1 5.5 4H15"/></svg></div>
+        <h3>We hope you haven’t tried these yet</h3>
+        <p>We work from the outside, so we can’t see your live flow or your test history. If you’ve already run one of these, tell us and we’ll go deeper on the rest.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="au-sec" id="ideas">
+  <div class="au-wrap">
+    <div class="au-ideas-h">
+      <p class="au-kicker">The shortlist</p>
+      <h2 class="au-h2">Five ideas. <span>Ranked by what we’d test first.</span></h2>
+    </div>
+    <div class="au-list" id="ideaList"></div>
+    <div class="au-band">
+      <div>
+        <p class="au-k">Potential outcome, based on Adapty data</p>
+        <h3>Together they move the ask to the moment viewers feel the ads, speak about the shows they chose, and let your own prices compete, live, without a release.</h3>
+        <p class="au-fn" id="bandFn"></p>
+        <a class="au-btn" href="#prototype">Tap through the prototype</a>
+      </div>
+      <div class="au-nums" id="bandNums"></div>
+    </div>
+  </div>
+</section>
+
+<section class="au-sec au-white" id="prototype">
+  <div class="au-wrap">
+    <div class="au-proto-h">
+      <p class="au-kicker">The prototype</p>
+      <h2 class="au-h2">Every idea, inside your own onboarding.</h2>
+      <p>Tap through it like a new user, or jump straight to an idea. Yellow numbers mark the screens that carry one.</p>
+    </div>
+    <div class="au-langrow" id="langRow" hidden><span>Prototype language</span><div class="au-lsw" id="langSw" role="group" aria-label="Prototype language"></div></div>
+    <div class="au-seg" id="chips" role="tablist" aria-label="Screens"></div>
+    <div class="au-stage">
+      <div class="phone"><div class="phone-in">
+        <div class="island"></div>
+        <div class="sbar"><span>9:41</span><span>●●● ▮</span></div>
+
+<!-- SCREENS:START — one section.scr[data-id=ID] per screen, in flow order. Only the screens an idea lands on,
+     plus the context needed to read the flow (~8–10). Wiring: data-go="<id>" · data-back · data-pick="key:value"
+     (+ data-advance="<id>") · data-toggle="key:value" · data-bind="key" / "label:key" / "count:key" ·
+     data-requires="key" · data-show="key:value" · data-input="key" · class="scr sheet" slides up (offer paywall).
+     RULE: images only from assets/ (their app, their site, App Store) — never stock, never hotlinked.
+     Extras: data-t="key" = translatable (markup is CONTENT.langs[0]; other languages in CONTENT.i18n) — keep data-t on
+     leaf-ish elements, never on an element that also carries data-bind/data-pick/data-show;
+     data-langtoggle cycles the language (their own language pill); data-aside keeps a screen out of the flow
+     (the paywall TODAY, rendered only for the side-by-side still). -->
+
+<section class="scr" data-id="welcome">
+  <img class="vu-wallimg" src="assets/crop/wall.jpg" alt="">
+  <div class="vu-fade"></div>
+  <button class="vu-pill" data-langtoggle aria-label="Switch language">English · 繁中</button>
+  <div class="vu-pad vu-welcome">
+    <img class="vu-logo" src="assets/crop/viu-logo.svg" alt="Viu">
+    <h1 class="vu-h1"><span data-t="w_h">Enjoy the Best of Asian Entertainment</span></h1>
+    <p class="vu-sub" data-t="w_s">All in one app</p>
+    <button class="vu-cta" data-go="lang"><span data-t="w_cta">Get started</span></button>
+  </div>
+</section>
+
+<section class="scr" data-id="lang">
+  <div class="vu-pad">
+    <div class="vu-top"><button class="vu-back" data-back aria-label="Back"><svg class="vu-svg" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><span class="vu-dots"><i class="vu-d"></i><i></i><i></i></span></div>
+    <h1 class="vu-h1"><span data-t="l_h">Choose your language</span></h1>
+    <p class="vu-sub" data-t="l_s">Menus and app text follow it.</p>
+    <button class="vu-opt" data-setlang="en"><span>English<small data-t="l_en">Philippines prices</small></span><span class="vu-ck"></span></button>
+    <button class="vu-opt" data-setlang="zh"><span>繁體中文<small data-t="l_zh">Traditional Chinese · Hong Kong prices</small></span><span class="vu-ck"></span></button>
+    <button class="vu-cta" style="margin-top:auto" data-go="genre"><span data-t="l_cta">Continue</span></button>
+  </div>
+</section>
+
+<section class="scr" data-id="genre">
+  <div class="vu-pad">
+    <div class="vu-top"><button class="vu-back" data-back aria-label="Back"><svg class="vu-svg" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><span class="vu-dots"><i class="vu-d"></i><i class="vu-d"></i><i></i></span></div>
+    <h1 class="vu-h1"><span data-t="g_h">What do you love watching?</span></h1>
+    <p class="vu-sub" data-t="g_s">Pick as many as you like. Your home fills up with them.</p>
+    <div class="vu-gens">
+      <button class="vu-gen" data-toggle="genres:kr"><img src="assets/crop/p-lovely.jpg" alt=""><span data-t="g_kr">Korean Dramas</span><i class="vu-ck"></i></button>
+      <button class="vu-gen" data-toggle="genres:cn"><img src="assets/crop/p-princess.jpg" alt=""><span data-t="g_cn">Chinese Dramas</span><i class="vu-ck"></i></button>
+      <button class="vu-gen" data-toggle="genres:th"><img src="assets/crop/p-4min.jpg" alt=""><span data-t="g_th">Thai Dramas</span><i class="vu-ck"></i></button>
+      <button class="vu-gen" data-toggle="genres:jp"><img src="assets/crop/p-sea.jpg" alt=""><span data-t="g_jp">Japanese Content</span><i class="vu-ck"></i></button>
+    </div>
+    <button class="vu-cta" style="margin-top:auto" data-requires="genres" data-go="picks"><span data-t="g_cta">Continue</span></button>
+  </div>
+</section>
+
+<section class="scr" data-id="picks">
+  <div class="vu-pad vu-scroll" style="gap:12px">
+    <div class="vu-head">
+      <img class="vu-logo" src="assets/crop/viu-logo.svg" alt="Viu">
+      <span class="vu-hi"><svg class="vu-svg" viewBox="0 0 24 24"><path d="M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></svg><span data-t="h_in">Inbox</span></span>
+      <span class="vu-hi"><svg class="vu-svg" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg><span data-t="h_se">Search</span></span>
+      <span class="vu-hi"><svg class="vu-svg" viewBox="0 0 24 24"><path d="M4 5h7v5H4zM13 5h7v5h-7zM4 13h7v6H4zM13 13h7v6h-7z"/></svg><span data-t="h_ca">Category</span></span>
+    </div>
+    <p class="vu-because"><span data-t="p_for">Because you picked </span><span class="vu-y" data-bind="label:picked"></span></p>
+    <div class="vu-feat">
+      <img data-lead src="assets/crop/p-cinderella.jpg" alt="">
+      <div>
+        <span class="vu-tag" data-t="p_tag">For you</span>
+        <p class="vu-ft" data-bind="label:show"></p>
+        <p class="vu-meta"><span class="vu-y" data-bind="label:g1"></span> | <span data-t="ep1">Episode 1</span></p>
+        <button class="vu-play" data-go="player"><svg class="vu-svg" viewBox="0 0 24 24"><path d="M7 5l12 7-12 7z"/></svg><span data-t="p_play">Play Episode 1</span></button>
+      </div>
+    </div>
+    <div class="vu-rows">
+      <div data-row="kr"><h3 class="vu-rh"><span data-t="g_kr">Korean Dramas</span></h3><div class="vu-strip">
+        <figure><img src="assets/crop/p-cinderella.jpg" alt=""><figcaption data-t="t_cin">Cinderella at 2AM</figcaption></figure>
+        <figure><img src="assets/crop/p-lovely.jpg" alt=""><figcaption data-t="t_lov">Lovely Runner</figcaption></figure>
+        <figure><img src="assets/crop/p-perfect.jpg" alt=""><figcaption data-t="t_per">Perfect Family</figcaption></figure></div></div>
+      <div data-row="cn"><h3 class="vu-rh"><span data-t="g_cn">Chinese Dramas</span></h3><div class="vu-strip">
+        <figure><img src="assets/crop/p-double.jpg" alt=""><figcaption data-t="t_dbl">The Double</figcaption></figure>
+        <figure><img src="assets/crop/p-princess.jpg" alt=""><figcaption data-t="t_pri">The Princess Royal</figcaption></figure></div></div>
+      <div data-row="th"><h3 class="vu-rh"><span data-t="g_th">Thai Dramas</span></h3><div class="vu-strip">
+        <figure><img src="assets/crop/p-4min.jpg" alt=""><figcaption>4MINUTES</figcaption></figure>
+        <figure><img src="assets/crop/p-gossip.jpg" alt=""><figcaption data-t="t_gos">The Divination Gossip Club</figcaption></figure></div></div>
+      <div data-row="jp"><h3 class="vu-rh"><span data-t="g_jp">Japanese Content</span></h3><div class="vu-strip">
+        <figure><img src="assets/crop/p-sea.jpg" alt=""><figcaption data-t="t_sea">Where does the Sea Begin</figcaption></figure>
+        <figure><img src="assets/crop/p-anime.jpg" alt=""><figcaption data-t="t_osh">Oshi no Ko</figcaption></figure></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="scr" data-id="player">
+  <div class="vu-video">
+    <img data-still src="assets/crop/still-cinderella.jpg" alt="">
+    <span class="vu-adk" data-t="a_k">Ad 1 of 2</span>
+    <span class="vu-adt">0:30</span>
+    <p class="vu-admsg"><span data-t="a_m">Your episode starts after the ad</span><small><span data-bind="label:show"></span> · <span data-t="ep1">Episode 1</span></small></p>
+    <span class="vu-bar"><i></i></span>
+  </div>
+  <div class="vu-info">
+    <div><b data-bind="label:show"></b><small data-t="ep1">Episode 1</small></div>
+    <svg class="vu-svg" viewBox="0 0 24 24"><path d="M7 4h10v16l-5-4-5 4z"/></svg>
+    <svg class="vu-svg" viewBox="0 0 24 24"><circle cx="6" cy="12" r="2"/><circle cx="17" cy="6" r="2"/><circle cx="17" cy="18" r="2"/><path d="M8 11l7-4M8 13l7 4"/></svg>
+    <svg class="vu-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>
+  </div>
+  <div class="vu-prem">
+    <h3><span data-t="a_h1">Skip the ads on </span><span class="vu-y" data-bind="label:show"></span></h3>
+    <p data-t="a_p">Viu Premium: every episode without ad breaks, unlimited downloads, up to 1080p.</p>
+    <button class="vu-cta" data-go="premium"><span data-t="a_cta">Watch without ads</span></button>
+    <button class="vu-ghost"><span data-t="a_no">Keep watching with ads</span></button>
+  </div>
+  <div class="vu-eps">
+    <div class="vu-eph"><span data-t="a_sel">Select Episode</span><svg class="vu-svg" viewBox="0 0 24 24" style="color:var(--b-ink)"><path d="M4 4h4v4H4zM10 4h4v4h-4zM16 4h4v4h-4zM4 10h4v4H4zM10 10h4v4h-4zM16 10h4v4h-4zM4 16h4v4H4zM10 16h4v4h-4zM16 16h4v4h-4z"/></svg></div>
+    <div class="vu-ep"><img data-still src="assets/crop/still-cinderella.jpg" alt=""><span data-t="ep1">Episode 1</span><svg class="vu-svg" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg></div>
+    <div class="vu-ep"><img data-still src="assets/crop/still-cinderella.jpg" alt=""><span><span data-t="ep2">Episode 2</span><em data-t="ep_pre">PREMIUM</em></span><svg class="vu-svg" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg></div>
+  </div>
+</section>
+
+<section class="scr" data-id="premium">
+  <div class="vu-pad">
+    <div class="vu-top"><button class="vu-back" data-back aria-label="Back"><svg class="vu-svg" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><img class="vu-logo" src="assets/crop/viu-logo.svg" alt="Viu" style="height:22px"></div>
+    <h1 class="vu-h1"><span data-t="c_h">What Premium changes</span></h1>
+    <p class="vu-sub" data-t="c_s">Same shows. No interruptions.</p>
+    <div class="vu-tbl">
+      <span class="vu-th"></span><span class="vu-th vu-c" data-t="c_free">Free</span><span class="vu-th vu-thp" data-t="c_pre">Premium</span>
+      <span data-t="c_r1">Ads</span><span class="vu-c" data-t="c_r1f">Before and during episodes</span><span class="vu-p" data-t="c_r1p">None</span>
+      <span data-t="c_r2">Downloads</span><span class="vu-c" data-t="c_r2f">Limited</span><span class="vu-p" data-t="c_r2p">Unlimited</span>
+      <span data-t="c_r3">Video quality</span><span class="vu-c" data-t="c_r3f">Standard</span><span class="vu-p" data-t="c_r3p">Up to 1080p</span>
+    </div>
+    <div class="vu-rate"><b data-t="c_rv">4.6</b><span><span class="vu-stars">★★★★★</span><span data-t="c_rc">22K ratings on the App Store</span></span></div>
+    <button class="vu-cta" style="margin-top:auto" data-go="paywall"><span data-t="c_cta">See Premium plans</span></button>
+  </div>
+</section>
+
+<section class="scr" data-id="paywall">
+  <button class="vu-x" data-go="offer" aria-label="Close"><svg class="vu-svg" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  <div class="vu-pwhero"><img data-lead src="assets/crop/p-cinderella.jpg" alt=""><img src="assets/crop/p-perfect.jpg" alt=""><img src="assets/crop/p-princess.jpg" alt=""><i class="vu-pwfade"></i></div>
+  <div class="vu-pad vu-pw">
+    <div class="vu-brandrow"><img class="vu-logo" src="assets/crop/viu-logo.svg" alt="Viu"><span class="vu-ptag" data-t="pw_tag">PREMIUM</span></div>
+    <h1 class="vu-h1"><span data-bind="label:g1"></span><span data-t="pw_h">, no ads.</span></h1>
+    <p class="vu-sub"><span data-t="pw_s1">Pick up </span><b data-bind="label:show"></b><span data-t="pw_s2"> where the ad cut in.</span></p>
+    <div class="vu-bens">
+      <span class="vu-ben"><svg class="vu-svg" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M4 4l16 16"/></svg><span data-t="b1">No ads</span></span>
+      <span class="vu-ben"><svg class="vu-svg" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg><span data-t="b2">Unlimited downloads</span></span>
+      <span class="vu-ben"><svg class="vu-svg" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7.5 9.5v5M7.5 12h3M10.5 9.5v5M13.5 9.5v5h1.2a2.5 2.5 0 0 0 0-5z"/></svg><span data-t="b3">Up to 1080p</span></span>
+    </div>
+
+    <div data-show="offer:a">
+      <div class="vu-plans">
+        <p class="vu-hl" data-t="oa_hl">₱107.50 a month on 12 months: 36% less than paying monthly.</p>
+        <button class="vu-plan" data-pick="plan:year"><span class="vu-rad"></span><span class="vu-pl"><b data-t="pl_y">12 Months</b><small data-t="pl_ys">₱107.50 a month, billed yearly</small></span><span class="vu-pr" data-t="pl_yp">₱1,290</span><span class="vu-save" data-t="pl_sv">SAVE 36%</span></button>
+        <button class="vu-plan" data-pick="plan:month"><span class="vu-rad"></span><span class="vu-pl"><b data-t="pl_m">Monthly</b><small data-t="pl_ms">Billed every month</small></span><span class="vu-pr" data-t="pl_mp">₱169</span></button>
+      </div>
+    </div>
+    <div data-show="offer:b">
+      <div class="vu-plans">
+        <p class="vu-hl" data-t="ob_hl">Every Premium feature free for 3 days, then 12 months for ₱1,290.</p>
+        <div class="vu-tl">
+          <div class="vu-st"><i></i><div><b data-t="ob_1">Today</b><small data-t="ob_1s">Premium unlocked. ₱0 today.</small></div></div>
+          <div class="vu-st"><i class="vu-o"></i><div><b data-t="ob_2">Day 2</b><small data-t="ob_2s">We remind you the trial is ending.</small></div></div>
+          <div class="vu-st"><i class="vu-o"></i><div><b data-t="ob_3">Day 3</b><small data-t="ob_3s">₱1,290 for 12 months (₱107.50 a month). Cancel before and pay nothing.</small></div></div>
+        </div>
+      </div>
+    </div>
+    <div data-show="offer:c">
+      <div class="vu-plans">
+        <p class="vu-hl" data-t="oc_hl">A year, a season or a month. Your call.</p>
+        <button class="vu-plan" data-pick="plan:year"><span class="vu-rad"></span><span class="vu-pl"><b data-t="pl_y">12 Months</b><small data-t="pl_ys">₱107.50 a month, billed yearly</small></span><span class="vu-pr" data-t="pl_yp">₱1,290</span><span class="vu-save" data-t="pl_sv">SAVE 36%</span></button>
+        <button class="vu-plan" data-pick="plan:q"><span class="vu-rad"></span><span class="vu-pl"><b data-t="pl_q">3 Months</b><small data-t="pl_qs">₱153 a month, a full season</small></span><span class="vu-pr" data-t="pl_qp">₱459</span></button>
+        <button class="vu-plan" data-pick="plan:month"><span class="vu-rad"></span><span class="vu-pl"><b data-t="pl_m">Monthly</b><small data-t="pl_ms">Billed every month</small></span><span class="vu-pr" data-t="pl_mp">₱169</span></button>
+      </div>
+    </div>
+
+    <div class="vu-ctaw">
+      <p class="vu-proof"><span class="vu-stars">★★★★★</span> <span data-t="pw_pr">4.6 · 22K ratings on the App Store</span></p>
+      <div class="vu-nb">
+        <button class="vu-cta" data-show="plan:year" data-go="done"><span data-t="cta_y">Get 12 months · ₱1,290</span></button>
+        <button class="vu-cta" data-show="plan:q" data-go="done"><span data-t="cta_q">Get 3 months · ₱459</span></button>
+        <button class="vu-cta" data-show="plan:month" data-go="done"><span data-t="cta_m">Get 1 month · ₱169</span></button>
+      </div>
+      <button class="vu-cta" data-show="offer:b" data-go="done"><span data-t="cta_b">Start my 3 free days</span></button>
+      <p class="vu-terms" data-t="pw_t">Renews automatically. Cancel anytime in Settings.</p>
+      <div class="vu-legal"><span data-t="lg1">Terms</span><span data-t="lg2">Privacy</span><span data-t="lg3">Restore</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="scr sheet vu-scrim" data-id="offer">
+  <div class="vu-sheet">
+    <span class="vu-grab"></span>
+    <button class="vu-x" data-go="player" aria-label="Close"><svg class="vu-svg" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    <div class="vu-ofimg"><img src="assets/crop/p-perfect.jpg" alt=""><img data-lead src="assets/crop/p-cinderella.jpg" alt=""><img src="assets/crop/p-gossip.jpg" alt=""></div>
+    <h2 class="vu-h2 vu-center"><span data-t="of_h">Just here for this weekend?</span></h2>
+    <p class="vu-sub vu-center"><span data-t="of_s1">One week of Premium for </span><b data-bind="label:show"></b><span data-t="of_s2">: no ads, downloads for the commute.</span></p>
+    <div class="vu-offer"><span class="vu-pl"><b data-t="of_n">Viu Premium · 1 week</b><small data-t="of_d">Renews weekly at ₱79. Cancel anytime.</small></span><span class="vu-pr" data-t="of_p">₱79</span></div>
+    <button class="vu-cta" data-go="done"><span data-t="of_cta">Get a week for ₱79</span></button>
+    <button class="vu-ghost" data-go="player"><span data-t="of_no">No thanks, keep watching with ads</span></button>
+  </div>
+</section>
+
+<section class="scr" data-id="done">
+  <div class="vu-pad" style="gap:14px">
+    <span class="vu-ok"><svg class="vu-svg" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span>
+    <h1 class="vu-h1 vu-center"><span data-t="d_h">You’re on Viu Premium</span></h1>
+    <p class="vu-sub vu-center"><b data-bind="label:show"></b> · <span data-t="d_s">Episode 1 picks up where the ad cut in. No more ad breaks.</span></p>
+    <div class="vu-feat" style="justify-content:center"><img data-lead src="assets/crop/p-cinderella.jpg" alt="" style="width:150px;height:214px"></div>
+    <div class="vu-dl"><svg class="vu-svg" viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg><span data-t="d_dl">Download Quota: Unlimited</span></div>
+    <button class="vu-cta" style="margin-top:auto" data-go="picks"><span data-t="d_cta">Continue watching</span></button>
+  </div>
+</section>
+
+<section class="scr" data-id="today" data-aside>
+  <button class="vu-x" aria-label="Close"><svg class="vu-svg" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  <div class="vu-pad" style="gap:12px">
+    <div class="vu-brandrow"><img class="vu-logo" src="assets/crop/viu-logo.svg" alt="Viu"></div>
+    <h1 class="vu-h1">Viu Premium</h1>
+    <div class="vu-tben"><svg class="vu-svg" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>Unlimited Downloads for offline viewing</div>
+    <div class="vu-tben"><svg class="vu-svg" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7.5 9.5v5M7.5 12h3M10.5 9.5v5M13.5 9.5v5h1.2a2.5 2.5 0 0 0 0-5z"/></svg>HD viewing, up to 1080p</div>
+    <div class="vu-tben"><svg class="vu-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>As fast as 4 hours, with subtitles</div>
+    <div class="vu-tben"><svg class="vu-svg" viewBox="0 0 24 24"><rect x="3" y="5" width="13" height="9" rx="1.5"/><rect x="15" y="10" width="6" height="10" rx="1.5"/></svg>Watch on multiple devices</div>
+    <div class="vu-plans" style="margin-top:6px">
+      <div class="vu-trow"><span>Viu Premium PH Weekly Sub</span><span>₱79</span></div>
+      <div class="vu-trow"><span>Viu Premium PH Monthly Sub</span><span>₱169</span></div>
+      <div class="vu-trow"><span>Viu Premium PH 3-Month Sub</span><span>₱459</span></div>
+      <div class="vu-trow"><span>Viu Premium PH 6-Month Sub</span><span>₱799</span></div>
+      <div class="vu-trow"><span>Viu Premium PH 12-Month Sub</span><span>₱1,290</span></div>
+    </div>
+    <button class="vu-cta" style="margin-top:auto">Subscribe</button>
+  </div>
+</section>
+<!-- SCREENS:END -->
+
+      </div></div>
+      <div class="au-pn" id="panel" aria-live="polite"></div>
+    </div>
+    <p class="au-hint">Close the paywall with ✕ to see idea 4. Switch offers A, B and C in the panel next to the paywall.</p>
+    <!-- shown when CONTENT.liveUrl is set: assets/qr-app.png = qr.swift "<liveUrl>?app" -->
+    <div class="au-qr" id="qrCard" hidden><img src="assets/qr-app.png" alt="QR code that opens the prototype full screen"><div><b>Try it on your phone</b><p>Scan to open the prototype full screen, the way a new user would see it.</p></div></div>
+    <div class="au-mobw" id="qrMob" hidden><a class="au-btn" href="?app">Open it full screen</a></div>
+  </div>
+</section>
+
+<!-- the paywall TODAY vs PROPOSED — built from CONTENT.compare (stills: assets/hero/<today>.png, <proposed>.png) -->
+<section class="au-sec" id="compare" hidden><div class="au-wrap" id="cmpBody"></div></section>
+
+<footer class="au-foot" id="sources">
+  <div class="au-wrap">
+    <details id="srcDetails">
+      <summary>Where the numbers come from</summary>
+      <div class="au-srcs" id="srcBody"></div>
+    </details>
+    <p class="au-fine" id="fine"></p>
+    <div class="au-cta-line">
+      <p>Every screen here can be built and A/B tested in Adapty’s Flow Builder, with no app release.</p>
+      <a class="au-btn" href="https://adapty.io/flow-paywall-builder/" target="_blank" rel="noopener">About Flow Builder</a>
+    </div>
+  </div>
+</footer>
+
+<!-- extras: video dialog (CONTENT.video), ?app bar, ?tour overlay (CONTENT.tour) -->
+<dialog class="au-vid" id="vid" aria-label="Walkthrough video">
+  <div class="au-vid-in"><video id="vidEl" controls muted playsinline preload="none"></video></div>
+  <div class="au-vid-bar"><a id="vidDl" download>Download the MP4</a><button type="button" class="au-vid-x" id="vidX">Close</button></div>
+</dialog>
+<div class="au-scrim" id="abScrim"></div>
+<div class="au-appbar" id="appbar">
+  <button type="button" class="au-ab-why" id="abWhy"><i></i><span id="abT"></span><em>Why ↑</em></button>
+  <div class="au-lsw" id="abLang" role="group" aria-label="Language"></div>
+</div>
+<div class="au-tour" aria-hidden="true">
+  <div class="au-tb"><img src="assets/brand/appstore-icon.jpg" alt="">Growth Audit <small>· Viu</small></div>
+  <div class="au-tby">Prepared by Adapty</div>
+  <div class="au-tcap" id="tCap"></div>
+  <div class="au-ttap" id="tTap"></div>
+  <div class="au-tprog"><i id="tProg"></i></div>
+  <div class="au-tintro" id="tIntro"></div>
+  <div class="au-tend" id="tEnd"></div>
+</div>
+
+<!-- CONTENT — all the audit's words and numbers, as data. Schema (brand-check enforces it):
+     ideas  : 3–5 rows, ranked (the audit is five ideas, never fifteen). screen = the screen that shows it.
+     panel  : one entry per screen. idea = its number in ideas (1-based) or 0 for a context screen.
+              why on an idea screen reads "<b>Try</b> X, <b>because</b> Y." in ≤ 45 words; iv = its range.
+              why on a context screen is one line saying what it sets up.
+     hero   : three screen ids shown as stills in the hero — run hero-stills.sh after the screens are done.
+     outcome: combined "up to" numbers, PS-deck style, never above the ceiling of the per-idea ranges.
+     sources: public facts only — App Store, their site, their screens. No sales research on this page.
+     EXTRAS (each one hides itself when left empty):
+     langs  : [{"code":"en","name":"English"},{"code":"es","name":"Español · Spain prices"}] — first = the markup's language
+     i18n   : {"es": {"<data-t key>": "text with {tokens}"}} — every data-t key, for every language after the first
+     prices : {"es": {"yr": "39,99 €", …}} — {tokens} in i18n strings; that storefront's real IAP prices
+     labelsI18n: {"es": {"goal": {"a": "…"}}} — C.labels per language (data-bind="label:…")
+     liveUrl: final Pages URL (QR card + video end card); the QR file encodes liveUrl + "?app"
+     video / poster: "assets/walkthrough.mp4" / "assets/walkthrough-poster.jpg" (record-video.sh)
+     compare: {today, proposed, kicker, title, sub, todayCap, rows:[{h, idea, was, now}], kept} — today = a data-aside screen
+     tour   : {segments:[{id, d, st, tap:[selector-in-screen, ms], pop, reveal, end}], captions:{id:{n|k, t, l, o, ol}},
+              introLede, endTitle} — ~30 s total; the last segment has end:true (the end card) -->
+<script type="application/json" id="content">
+{
+ "app": "Viu",
+ "state": {
+  "genres": [
+   "kr",
+   "th"
+  ],
+  "offer": "a",
+  "plan": "year",
+  "g1": "kr",
+  "show": "kr",
+  "picked": [
+   "kr",
+   "th"
+  ]
+ },
+ "labels": {
+  "g1": {
+   "kr": "Korean Dramas",
+   "cn": "Chinese Dramas",
+   "th": "Thai Dramas",
+   "jp": "Japanese Content"
+  },
+  "picked": {
+   "kr": "Korean Dramas",
+   "cn": "Chinese Dramas",
+   "th": "Thai Dramas",
+   "jp": "Japanese Content"
+  },
+  "show": {
+   "kr": "Cinderella at 2AM",
+   "cn": "The Double",
+   "th": "4MINUTES",
+   "jp": "Where does the Sea Begin"
+  }
+ },
+ "chips": {
+  "welcome": "Welcome",
+  "lang": "Language",
+  "genre": "Genres",
+  "picks": "Home",
+  "player": "Ad break",
+  "premium": "Free vs Premium",
+  "paywall": "Paywall",
+  "offer": "Offer",
+  "done": "Premium on"
+ },
+ "hero": [
+  "picks",
+  "paywall",
+  "player"
+ ],
+ "outcome": {
+  "cr": "+20%",
+  "arpu": "+15%"
+ },
+ "ideas": [
+  {
+   "screen": "player",
+   "title": "Ask at the first ad break, not before the first episode",
+   "what": "Free viewers already sit through ads before and during episodes, and your Philippine reviews say ads are the reason people pay ₱169. Let Episode 1 of the show they just picked start, and offer Premium on the ad break itself: no more ads on this show, from now.",
+   "impact": "+10–20%",
+   "il": "CR to purchase"
+  },
+  {
+   "screen": "picks",
+   "title": "Use the genres they pick",
+   "what": "One tap on your own categories (Korean, Chinese and Thai Dramas, Japanese Content) fills the first home screen with those shows, and the paywall says it back: “Korean Dramas, no ads. Pick up Cinderella at 2AM where the ad cut in.”",
+   "impact": "+8–15%",
+   "il": "CR to purchase"
+  },
+  {
+   "screen": "paywall",
+   "title": "Test three offers on one paywall, without a release",
+   "what": "Same screen, three offers on your real Philippine prices: 12 months at ₱1,290 shown as ₱107.50 a month (36% less than ₱169 monthly), a 3-day trial on that plan, or a three-plan mix with 3 months at ₱459. Each one switches on in Adapty, with no app update.",
+   "impact": "+10–15%",
+   "il": "ARPU"
+  },
+  {
+   "screen": "offer",
+   "title": "Catch the ✕ with a one-week pass",
+   "what": "Someone who closes a ₱1,290 plan may still pay ₱79 for one ad-free week of the show they’re on. “Viu Premium PH Weekly Sub” already exists, so the second chance is a real plan, with no timer and no strikethrough.",
+   "impact": "+10–15%",
+   "il": "ARPU"
+  },
+  {
+   "screen": "premium",
+   "title": "Show what Premium changes, next to your rating",
+   "what": "Three rows answer “why pay”: ads, downloads and 1080p, free against Premium, beside 4.6 stars from 22K Philippine ratings. Many reviews are about ads, so say plainly what Premium removes before the price.",
+   "impact": "+5–15%",
+   "il": "CR to purchase"
+  }
+ ],
+ "panel": {
+  "welcome": {
+   "idea": 0,
+   "t": "Your welcome, kept",
+   "why": "Your App Store line, “Enjoy the Best of Asian Entertainment”, over your own poster wall. The pill switches the language."
+  },
+  "lang": {
+   "idea": 0,
+   "t": "Language, as today",
+   "why": "Your local-language interface. The choice here switches the whole prototype, prices included."
+  },
+  "genre": {
+   "idea": 0,
+   "t": "One question: what do they watch?",
+   "why": "Your own home-screen categories, multi-select, one tap each. Sets up idea 2."
+  },
+  "picks": {
+   "idea": 2,
+   "t": "Use the genres they pick",
+   "why": "<b>Try</b> filling the first home screen with the categories they just tapped and naming the first one again on the paywall, <b>because</b> a question the flow uses converts better than one it forgets, and it costs one tap.",
+   "iv": "CR +8–15%",
+   "il": "to purchase",
+   "also": "Posters, categories and the yellow labels are your own, from the App Store listing."
+  },
+  "player": {
+   "idea": 1,
+   "t": "Ask at the first ad break, not before the first episode",
+   "why": "<b>Try</b> letting Episode 1 start and offering Premium on the first ad break, <b>because</b> that is when a free viewer feels what Premium removes, and ads are the reason reviewers give most for paying.",
+   "iv": "CR +10–20%",
+   "il": "to purchase",
+   "also": "“Select Episode” and the episode rows are your player, as on the App Store."
+  },
+  "premium": {
+   "idea": 5,
+   "t": "Show what Premium changes, next to your rating",
+   "why": "<b>Try</b> one free-vs-Premium table (ads, downloads, 1080p) beside 4.6 stars from 22K ratings, <b>because</b> a viewer deciding needs to see exactly what changes, and proof works best where the decision happens.",
+   "iv": "CR +5–15%",
+   "il": "to purchase"
+  },
+  "paywall": {
+   "idea": 3,
+   "t": "Test three offers on one paywall, without a release",
+   "why": "<b>Try</b> three offers on this one screen, all on your real prices, and let the results choose, <b>because</b> annual saving, trial length and plan mix move revenue differently by market, and each can go live without an app release.",
+   "iv": "ARPU +10–15%",
+   "il": "from the winning offer",
+   "also": "<button type=\"button\" class=\"au-var\" data-pick=\"offer:a\">A · Annual discount</button><button type=\"button\" class=\"au-var\" data-pick=\"offer:b\">B · Trial length</button><button type=\"button\" class=\"au-var\" data-pick=\"offer:c\">C · Plan mix</button><br>Idea 2 is the headline; idea 5’s rating sits above the button. AI Studio grew revenue 70% in six months with paywall tests live in under 30 minutes (Adapty case study)."
+  },
+  "offer": {
+   "idea": 4,
+   "t": "Catch the ✕ with a one-week pass",
+   "why": "<b>Try</b> answering ✕ with one week of Premium for ₱79, your existing weekly plan, with no timer and a way back to the episode, <b>because</b> a second chance right after the paywall converts people who said no to a year.",
+   "iv": "ARPU +10–15%",
+   "il": "from people who close the paywall",
+   "also": "In Traditional Chinese the offer is the 3-month plan (HK$113): Hong Kong has no weekly plan."
+  },
+  "done": {
+   "idea": 0,
+   "t": "Straight back to the episode",
+   "why": "After the purchase they land where the ad cut in, with your own “Download Quota: Unlimited” line."
+  }
+ },
+ "langs": [
+  {
+   "code": "en",
+   "name": "English · Philippines prices"
+  },
+  {
+   "code": "zh",
+   "name": "繁體中文 · Hong Kong prices"
+  }
+ ],
+ "i18n": {
+  "zh": {
+   "w_h": "盡享亞洲精彩娛樂",
+   "w_s": "全部盡在一個 App",
+   "w_cta": "開始",
+   "l_h": "選擇語言",
+   "l_s": "選單及介面文字會跟隨所選語言。",
+   "l_en": "菲律賓價格",
+   "l_zh": "繁體中文 · 香港價格",
+   "l_cta": "繼續",
+   "g_h": "你最喜歡看甚麼？",
+   "g_s": "可選多項，主頁會為你排好這些節目。",
+   "g_kr": "韓劇",
+   "g_cn": "華語劇",
+   "g_th": "泰劇",
+   "g_jp": "日本節目",
+   "g_cta": "繼續",
+   "h_in": "收件匣",
+   "h_se": "搜尋",
+   "h_ca": "類別",
+   "p_for": "因為你選了",
+   "p_tag": "為你推薦",
+   "ep1": "第 1 集",
+   "p_play": "播放第 1 集",
+   "t_cin": "凌晨兩點的灰姑娘",
+   "t_lov": "背著善宰跑吧",
+   "t_per": "完美家庭",
+   "t_dbl": "墨雨雲間",
+   "t_pri": "度華年",
+   "t_gos": "The Divination Gossip Club",
+   "t_sea": "海的開始",
+   "t_osh": "【我推的孩子】",
+   "a_k": "廣告 1/2",
+   "a_m": "廣告後即播放節目",
+   "a_h1": "跳過廣告，直接看",
+   "a_p": "Viu 升級會員：每集都沒有廣告，無限下載，最高 1080p。",
+   "a_cta": "不看廣告，立即觀看",
+   "a_no": "繼續看廣告版",
+   "a_sel": "選擇集數",
+   "ep2": "第 2 集",
+   "ep_pre": "升級會員",
+   "c_h": "升級會員有甚麼不同",
+   "c_s": "一樣的節目，不再被打斷。",
+   "c_free": "免費",
+   "c_pre": "升級會員",
+   "c_r1": "廣告",
+   "c_r1f": "節目前及節目中",
+   "c_r1p": "沒有",
+   "c_r2": "下載",
+   "c_r2f": "有限",
+   "c_r2p": "無限",
+   "c_r3": "畫質",
+   "c_r3f": "標準",
+   "c_r3p": "最高 1080p",
+   "c_rv": "{rv}",
+   "c_rc": "{rc}",
+   "c_cta": "查看升級會員計劃",
+   "pw_tag": "升級會員",
+   "pw_h": "，零廣告。",
+   "pw_s1": "繼續看",
+   "pw_s2": "，由廣告打斷的地方開始。",
+   "b1": "零廣告",
+   "b2": "無限下載",
+   "b3": "最高 1080p",
+   "oa_hl": "12 個月計劃每月只需 {ypm}，比月費計劃便宜 {save}。",
+   "pl_y": "12 個月",
+   "pl_ys": "每月 {ypm}，按年收費",
+   "pl_yp": "{yr}",
+   "pl_sv": "慳 {save}",
+   "pl_m": "月費",
+   "pl_ms": "每月收費",
+   "pl_mp": "{mo}",
+   "ob_hl": "免費試用所有升級會員功能 3 日，之後 12 個月 {yr}。",
+   "ob_1": "今日",
+   "ob_1s": "解鎖升級會員，今日 {zero}。",
+   "ob_2": "第 2 日",
+   "ob_2s": "我們會提醒你試用即將結束。",
+   "ob_3": "第 3 日",
+   "ob_3s": "12 個月 {yr}（每月 {ypm}）。之前取消，分文不收。",
+   "oc_hl": "一年、一季或一個月，由你決定。",
+   "pl_q": "3 個月",
+   "pl_qs": "每月 {qpm}，追完一整季",
+   "pl_qp": "{q}",
+   "pw_pr": "{rate}",
+   "cta_y": "選擇 12 個月 · {yr}",
+   "cta_q": "選擇 3 個月 · {q}",
+   "cta_m": "選擇 1 個月 · {mo}",
+   "cta_b": "開始 3 日免費試用",
+   "pw_t": "自動續期，可隨時在「設定」取消。",
+   "lg1": "條款",
+   "lg2": "私隱",
+   "lg3": "恢復購買",
+   "of_h": "還未準備好付一年？",
+   "of_s1": "3 個月升級會員，追完",
+   "of_s2": "整季，零廣告。",
+   "of_n": "Viu 升級會員 · 3 個月",
+   "of_d": "每月約 {qpm}，可隨時取消。",
+   "of_p": "{q}",
+   "of_cta": "以 {q} 追 3 個月",
+   "of_no": "不用了，繼續看廣告版",
+   "d_h": "你已成為 Viu 升級會員",
+   "d_s": "第 1 集由廣告打斷的地方繼續，不再有廣告。",
+   "d_dl": "下載配額：無限",
+   "d_cta": "繼續觀看"
+  }
+ },
+ "prices": {
+  "zh": {
+   "yr": "HK$370",
+   "ypm": "HK$30.8",
+   "mo": "HK$42",
+   "q": "HK$113",
+   "qpm": "HK$37.7",
+   "save": "27%",
+   "zero": "HK$0",
+   "rv": "4.4",
+   "rc": "9,418 個 App Store 評分",
+   "rate": "4.4 · 9,418 個 App Store 評分"
+  }
+ },
+ "labelsI18n": {
+  "zh": {
+   "g1": {
+    "kr": "韓劇",
+    "cn": "華語劇",
+    "th": "泰劇",
+    "jp": "日本節目"
+   },
+   "picked": {
+    "kr": "韓劇",
+    "cn": "華語劇",
+    "th": "泰劇",
+    "jp": "日本節目"
+   },
+   "show": {
+    "kr": "凌晨兩點的灰姑娘",
+    "cn": "墨雨雲間",
+    "th": "4MINUTES",
+    "jp": "海的開始"
+   }
+  }
+ },
+ "liveUrl": "https://eddieatadapty.github.io/viu-flow-rebuild/",
+ "video": "assets/walkthrough.mp4",
+ "poster": "assets/walkthrough-poster.jpg",
+ "compare": {
+  "today": "today",
+  "proposed": "paywall",
+  "kicker": "The paywall, side by side",
+  "title": "Your plan list today, and proposed.",
+  "sub": "Today is rebuilt from your plan list, not your live screen.",
+  "todayCap": "rebuilt from your Philippine App Store plan list",
+  "rows": [
+   {
+    "h": "Plans",
+    "idea": 3,
+    "was": "Five durations side by side: ₱79 a week, ₱169 a month, ₱459, ₱799 and ₱1,290.",
+    "now": "Three offers tested on one paywall: annual saving, a 3-day trial, or a three-plan mix."
+   },
+   {
+    "h": "The annual saving",
+    "idea": 3,
+    "was": "₱1,290 for 12 months, with no per-month price.",
+    "now": "₱107.50 a month, 36% less than monthly, pre-selected."
+   },
+   {
+    "h": "Headline",
+    "idea": 2,
+    "was": "“Viu Premium”, the plan name.",
+    "now": "“Korean Dramas, no ads.” from the genres they picked, and the show they were watching."
+   },
+   {
+    "h": "Proof",
+    "idea": 5,
+    "was": "Not on the plan list.",
+    "now": "4.6 stars from 22K ratings, right above the button."
+   },
+   {
+    "h": "On close",
+    "idea": 4,
+    "was": "No offer we could see.",
+    "now": "One week for ₱79, your own weekly plan, with no timer."
+   }
+  ],
+  "kept": "Kept: your black and yellow, the viu mark, your Premium benefits in your words, your plan names and every price."
+ },
+ "tour": {
+  "introLede": "Five ideas to turn more viewers into Viu Premium subscribers.",
+  "endTitle": "Five ideas, built into your own onboarding.",
+  "segments": [
+   {
+    "id": "welcome",
+    "d": 3200,
+    "tap": [
+     ".vu-cta",
+     2800
+    ]
+   },
+   {
+    "id": "lang",
+    "d": 1900,
+    "tap": [
+     ".vu-cta",
+     1500
+    ]
+   },
+   {
+    "id": "genre",
+    "d": 1500,
+    "st": {
+     "genres": [
+      "kr"
+     ]
+    },
+    "tap": [
+     "[data-toggle=\"genres:th\"]",
+     1150
+    ]
+   },
+   {
+    "id": "genre",
+    "d": 1100,
+    "st": {
+     "genres": [
+      "kr",
+      "th"
+     ]
+    },
+    "tap": [
+     ".vu-cta",
+     750
+    ]
+   },
+   {
+    "id": "picks",
+    "d": 3300,
+    "reveal": ".vu-rows",
+    "tap": [
+     ".vu-play",
+     2900
+    ]
+   },
+   {
+    "id": "player",
+    "d": 3500,
+    "pop": ".vu-prem",
+    "tap": [
+     ".vu-prem .vu-cta",
+     3100
+    ]
+   },
+   {
+    "id": "premium",
+    "d": 2700,
+    "reveal": ".vu-rate",
+    "tap": [
+     ".vu-cta",
+     2350
+    ]
+   },
+   {
+    "id": "paywall",
+    "d": 2900,
+    "st": {
+     "offer": "a",
+     "plan": "year"
+    }
+   },
+   {
+    "id": "paywall",
+    "d": 2100,
+    "st": {
+     "offer": "b",
+     "plan": "year"
+    }
+   },
+   {
+    "id": "paywall",
+    "d": 2300,
+    "st": {
+     "offer": "c",
+     "plan": "year"
+    },
+    "tap": [
+     ".vu-x",
+     1950
+    ]
+   },
+   {
+    "id": "offer",
+    "d": 2600
+   },
+   {
+    "id": "offer",
+    "d": 3300,
+    "end": true
+   }
+  ],
+  "captions": {
+   "welcome": {
+    "k": "Context",
+    "t": "Your welcome, kept",
+    "l": "Your App Store line, over your own poster wall."
+   },
+   "lang": {
+    "k": "Context",
+    "t": "Language, as today",
+    "l": "English or Traditional Chinese. Prices follow."
+   },
+   "genre": {
+    "k": "Context",
+    "t": "One question",
+    "l": "What do you love watching? One tap per category."
+   },
+   "picks": {
+    "n": 2,
+    "t": "Use the genres they pick",
+    "l": "Their categories fill the first home screen.",
+    "o": "CR +8–15%",
+    "ol": "to purchase"
+   },
+   "player": {
+    "n": 1,
+    "t": "Ask at the first ad break",
+    "l": "Episode 1 starts. Premium is offered when the ad does.",
+    "o": "CR +10–20%",
+    "ol": "to purchase"
+   },
+   "premium": {
+    "n": 5,
+    "t": "Show what Premium changes",
+    "l": "Ads, downloads, 1080p, next to 4.6 stars.",
+    "o": "CR +5–15%",
+    "ol": "to purchase"
+   },
+   "paywall": {
+    "n": 3,
+    "t": "Three offers, one paywall",
+    "l": "Annual saving, a 3-day trial, or three plans. No release.",
+    "o": "ARPU +10–15%",
+    "ol": "from the winning offer"
+   },
+   "offer": {
+    "n": 4,
+    "t": "Catch the ✕",
+    "l": "One week for ₱79, your own weekly plan. No timer.",
+    "o": "ARPU +10–15%",
+    "ol": "from people who close it"
+   }
+  }
+ },
+ "grounding": "Impact ranges are Adapty’s expected effect from teardowns and A/B tests across 30,000+ subscription apps, not measured lift for Viu. They overlap, so they don’t add up.",
+ "sources": [
+  {
+   "group": "Prices",
+   "items": [
+    {
+     "dt": "₱169 a month · ₱1,290 for 12 months",
+     "dd": "“Viu Premium PH Monthly Sub” and “Viu Premium PH 12-Month Sub”, In-App Purchases on the <a href=\"https://apps.apple.com/ph/app/viu/id1036095179\" target=\"_blank\" rel=\"noopener\">Philippines App Store listing</a>. ₱1,290 ÷ 12 = ₱107.50 a month; 12 × ₱169 = ₱2,028, so 12 months is 36% less."
+    },
+    {
+     "dt": "₱459 for 3 months",
+     "dd": "“Viu Premium PH 3-Month Sub”, same list. ₱459 ÷ 3 = ₱153 a month."
+    },
+    {
+     "dt": "₱79 a week (offer)",
+     "dd": "“Viu Premium PH Weekly Sub”, same list. Shown as a one-week pass that renews weekly, with no strikethrough and no timer."
+    },
+    {
+     "dt": "Hong Kong: HK$42 · HK$113 · HK$370",
+     "dd": "“Viu 升級會員 月費計劃 (香港)”, “三個月收費計劃” and “年費計劃” on the <a href=\"https://apps.apple.com/hk/app/viu/id1036095179\" target=\"_blank\" rel=\"noopener\">Hong Kong listing</a>. HK$370 ÷ 12 = HK$30.8 a month, 27% less than 12 × HK$42; HK$113 ÷ 3 = HK$37.7. Hong Kong lists no weekly plan, so the Chinese offer on close is the 3-month plan."
+    },
+    {
+     "dt": "Why the Philippines and Hong Kong",
+     "dd": "The Philippines is the largest English-language storefront for this app (22,419 ratings, against 5,949 in Singapore). Hong Kong is the home market, and the listing’s own description is in Traditional Chinese. Thailand has the most ratings (117K) and would be the next language."
+    },
+    {
+     "dt": "Not used",
+     "dd": "“Viu Premium PH 6-Month Sub” (₱799), in today’s list but left out of the proposed mix. Other markets’ plans shown on the Philippine list (SG ₱399, TH ₱249, HK ₱299 / ₱499, NZ ₱179). Hong Kong Premium+ (HK$78 / HK$228 / HK$798), Lite (HK$48 / HK$138 / HK$458) and the Singapore plan (HK$58): different tiers whose features we couldn’t verify."
+    }
+   ]
+  },
+  {
+   "group": "Proof",
+   "items": [
+    {
+     "dt": "4.6 stars · 22K ratings",
+     "dd": "4.57 from 22,419 ratings on the <a href=\"https://apps.apple.com/ph/app/viu/id1036095179\" target=\"_blank\" rel=\"noopener\">Philippines listing</a> at the time of writing. Hong Kong: 4.35 from 9,418, shown as 4.4."
+    },
+    {
+     "dt": "Proof case: AI Studio",
+     "dd": "Revenue +70% in six months; conversion to paid doubled by matching onboarding to each ad; paywall tests live in under 30 minutes, with a team of four. <a href=\"https://adapty.io/case-studies/ai-studio/\" target=\"_blank\" rel=\"noopener\">Adapty case study</a>."
+    },
+    {
+     "dt": "Why the ad break",
+     "dd": "The most recent 150 public App Store reviews in the Philippines: ads are the most common topic, reviewers say they paid ₱169 “to skip ads”, and several describe 30-second ads in pairs."
+    }
+   ]
+  },
+  {
+   "group": "Features and copy",
+   "items": [
+    {
+     "dt": "Welcome line",
+     "dd": "“Enjoy the Best of Asian Entertainment / All in one app”: your first App Store screenshot."
+    },
+    {
+     "dt": "Premium benefits",
+     "dd": "“Unlimited Downloads”, “HD Viewing, up to 1080p (exclusive to Viu Premium members)”, “as fast as 4 hours … with subtitles”, “Watch on multiple devices”, “Local language interface” and “Download Quota: Unlimited”: your listing description and screenshots 3–6."
+    },
+    {
+     "dt": "Categories and shows",
+     "dd": "Korean Dramas, Thai Dramas, Chinese Dramas, Japanese Content and the shows (Cinderella at 2AM, Lovely Runner, Perfect Family, The Double, The Princess Royal, 4MINUTES, The Divination Gossip Club, Where does the Sea Begin, Oshi no Ko) from screenshots 1–3. Your listing notes the catalogue varies by region. The Chinese titles are the Hong Kong titles as we know them."
+    },
+    {
+     "dt": "The free column",
+     "dd": "Premium’s side comes from your listing. The free side (ads before and during episodes, limited downloads, standard quality) is our reading of the listing’s “exclusive to Premium” notes and public reviews. Please check it."
+    },
+    {
+     "dt": "Our words",
+     "dd": "The genre question, the “For you” tag, the ad-break card, the comparison, the paywall and offer copy, the buttons and the Traditional Chinese translation are ours, not yours."
+    }
+   ]
+  },
+  {
+   "group": "Design",
+   "items": [
+    {
+     "dt": "Colours",
+     "dd": "Yellow #ffbf00 from the viu.com logo and CSS (your in-app scrubber samples #f9bf0a). Black, #0d0d0d and #191919 panels sampled from your App Store screenshots; #b3b3b3 secondary text from viu.com’s CSS."
+    },
+    {
+     "dt": "Type",
+     "dd": "Your in-app type reads as the iOS system font on the screenshots, so the screens use it. viu.com uses Nunito."
+    },
+    {
+     "dt": "Art",
+     "dd": "Posters, the episode still and the poster wall cut from App Store screenshots 2 and 4; the yellow viu mark from viu.com."
+    }
+   ]
+  },
+  {
+   "group": "What we couldn’t see",
+   "items": [
+    {
+     "dt": "Your live onboarding and paywall",
+     "dd": "Viu isn’t in ScreensDesign’s library, viu.com is not available in our region, and we haven’t walked the live app. “Today” is rebuilt from your plan list and listing, not your live screen."
+    },
+    {
+     "dt": "Trial",
+     "dd": "No trial shows on the listing; one review mentions a first-month discount on monthly. The 3-day trial in offer B is an App Store introductory offer you would set up. Trials tend to lower LTV in Entertainment, so test B against A rather than switching to it."
+    },
+    {
+     "dt": "Sign-up",
+     "dd": "Where your account step sits today. The prototype leaves it out."
+    },
+    {
+     "dt": "Which app",
+     "dd": "This is the Viu app by PCCW OTT (Hong Kong, Singapore, the Philippines, Thailand). The separate Viu app for Indonesia, Malaysia, the Middle East and South Africa is not covered here."
+    }
+   ]
+  }
+ ]
+}
+
+</script>
+
+<script>
+/* Viu hooks: the genres they pick fill the home rows, choose the show they start, and come back on the paywall;
+   the offer switch (A/B/C) lives on the audit side, in the paywall panel. Every image path is listed literally here. */
+var VU_IMG = {
+  cinderella: 'assets/crop/p-cinderella.jpg', lovely: 'assets/crop/p-lovely.jpg', perfect: 'assets/crop/p-perfect.jpg',
+  double: 'assets/crop/p-double.jpg', princess: 'assets/crop/p-princess.jpg', fourmin: 'assets/crop/p-4min.jpg',
+  gossip: 'assets/crop/p-gossip.jpg', sea: 'assets/crop/p-sea.jpg', anime: 'assets/crop/p-anime.jpg',
+  still: 'assets/crop/still-cinderella.jpg', wall: 'assets/crop/wall.jpg', logo: 'assets/crop/viu-logo.svg'
+};
+var VU_LEAD = {kr: 'cinderella', cn: 'double', th: 'fourmin', jp: 'sea'};
+function vuSrc(el, src){ if (el.getAttribute('src') !== src) el.setAttribute('src', src); }
+window.onSync = function(S){
+  var g = (S.genres && S.genres.length) ? S.genres : ['kr'];
+  S.g1 = g[0]; S.show = g[0]; S.picked = g.slice();
+  if (S.offer === 'a' && S.plan === 'q') S.plan = 'year';
+  if (S.offer === 'b') S.plan = 'year';
+  document.querySelectorAll('[data-row]').forEach(function(r){ var i = g.indexOf(r.dataset.row); r.style.display = i > -1 ? '' : 'none'; r.style.order = i; });
+  document.querySelectorAll('img[data-lead]').forEach(function(im){ vuSrc(im, VU_IMG[VU_LEAD[S.g1]]); });
+  document.querySelectorAll('img[data-still]').forEach(function(im){ vuSrc(im, S.g1 === 'kr' ? VU_IMG.still : VU_IMG[VU_LEAD[S.g1]]); });
+  document.querySelectorAll('.vu-nb').forEach(function(e){ e.style.display = S.offer === 'b' ? 'none' : ''; });
+  document.querySelectorAll('.au-var').forEach(function(b){ b.classList.toggle('on', b.dataset.pick === 'offer:' + S.offer); });
+  document.querySelectorAll('.phone [data-pick]').forEach(function(el){ var p = el.dataset.pick.split(':'); el.classList.toggle('on', S[p[0]] === p[1]); });
+  document.querySelectorAll('.phone [data-show]').forEach(function(el){ var p = el.dataset.show.split(':'); el.style.display = String(S[p[0]]) === p[1] ? '' : 'none'; });
+  /* the engine re-binds label:* after onSync only on the next sync, so bind the derived labels here */
+  document.querySelectorAll('[data-bind]').forEach(function(el){
+    var m = el.dataset.bind.split(':'); if (m[0] === 'label' && /^(g1|show|picked)$/.test(m[1])) el.textContent = lab(m[1]);
+  });
+};
+/* the panel is re-rendered on every screen change: re-sync so the offer buttons in it get .on */
+window.onEnter = function(id, S){ sync(); };
+</script>
+<script>
+/* ============ engine — generic, do not fork per app ============ */
+var C = JSON.parse(document.getElementById('content').textContent);
+var S = C.state, scr = {}, ORDER = [], hist = [], cur = null, Q = location.search;
+var SHOT = /[?&](shot|phone|tour)\b/.test(Q), HERO = /[?&]hero\b/.test(Q);
+/* a screen with data-aside (e.g. the paywall TODAY for the side-by-side) renders for stills but is not part of the flow */
+document.querySelectorAll('.scr').forEach(function(s){ scr[s.dataset.id] = s; if (!s.hasAttribute('data-aside')) ORDER.push(s.dataset.id); });
+if (/[?&]shot\b/.test(Q)) document.documentElement.classList.add('shot');
+if (/[?&]phone\b/.test(Q)) document.documentElement.classList.add('shot', 'phoneonly');
+if (/[?&]clear\b/.test(Q)) document.documentElement.classList.add('clear');
+var IDEAS = (C.ideas || []).length;
+
+/* ---- languages: markup is the first language; C.i18n[lang][data-t key] the others; {tokens} from C.prices[lang] ---- */
+var LANGS = C.langs || [], BASE = LANGS.length ? LANGS[0].code : 'en', LANG_DONE = BASE, BASE_LABELS = JSON.parse(JSON.stringify(C.labels || {}));
+if (!S.lang) S.lang = BASE;
+function fillP(s, l){ var P = (C.prices || {})[l] || {}; return String(s).replace(/\{(\w+)\}/g, function(m, k){ return k in P ? P[k] : m; }); }
+function applyLang(){
+  var l = S.lang || BASE; if (l === LANG_DONE) return;
+  var T = (C.i18n || {})[l] || {};
+  document.querySelectorAll('.phone [data-t]').forEach(function(el){
+    if (el._base == null) el._base = el.innerHTML;
+    el.innerHTML = l === BASE || T[el.dataset.t] == null ? el._base : fillP(T[el.dataset.t], l);
+  });
+  C.labels = JSON.parse(JSON.stringify(BASE_LABELS));
+  var LL = (C.labelsI18n || {})[l] || {}; Object.keys(LL).forEach(function(k){ C.labels[k] = LL[k]; });
+  LANG_DONE = l;
+}
+function setLang(l){
+  if (!LANGS.some(function(x){ return x.code === l; })) return;
+  S.lang = l; sync();
+  document.querySelectorAll('[data-setlang]').forEach(function(b){ b.classList.toggle('on', b.dataset.setlang === l); });
+  if (window.onLang) window.onLang(l);
+}
+
+function lab(key){ var v = S[key]; var L = C.labels[key]; if (Array.isArray(v)) return v.map(function(x){ return L && L[x] || x; }).join(', '); return (L && L[v]) || v; }
+function sync(){
+  applyLang();
+  document.querySelectorAll('[data-bind]').forEach(function(el){
+    var b = el.dataset.bind, m = b.split(':');
+    el.textContent = m[0] === 'label' ? lab(m[1]) : m[0] === 'count' ? (S[m[1]] || []).length : (S[b] == null ? '' : S[b]);
+  });
+  document.querySelectorAll('[data-pick]').forEach(function(el){ var p = el.dataset.pick.split(':'); el.classList.toggle('on', S[p[0]] === p[1]); });
+  document.querySelectorAll('[data-toggle]').forEach(function(el){ var p = el.dataset.toggle.split(':'); el.classList.toggle('on', (S[p[0]] || []).indexOf(p[1]) > -1); });
+  document.querySelectorAll('[data-requires]').forEach(function(el){ el.disabled = !(S[el.dataset.requires] || []).length; });
+  document.querySelectorAll('[data-show]').forEach(function(el){ var p = el.dataset.show.split(':'); el.style.display = String(S[p[0]]) === p[1] ? '' : 'none'; });
+  if (window.onSync) window.onSync(S);
+}
+function show(id, dir){
+  var from = scr[cur], to = scr[id]; if (!to || id === cur) return;
+  var sheet = to.classList.contains('sheet');
+  if (from){
+    from.classList.remove('is-active');
+    if (sheet) from.classList.add('under');                                   /* a sheet slides up over the screen that opened it */
+    else if (dir === 'fwd' && !from.classList.contains('sheet')) from.classList.add('is-past');
+  }
+  if (!sheet) Object.keys(scr).forEach(function(k){ var u = scr[k]; if (u !== to && u.classList.contains('under')) { u.classList.remove('under'); if (dir === 'fwd') u.classList.add('is-past'); } });
+  to.classList.remove('is-past', 'under'); to.classList.add('is-active'); cur = id;
+  paint(); if (window.onEnter) window.onEnter(id, S);
+}
+function go(id){ if (cur) hist.push(cur); show(id, 'fwd'); }
+function back(){ if (hist.length) { var p = hist.pop(); scr[cur].classList.remove('is-active'); show(p, 'back'); } }
+function jump(id){
+  Object.keys(scr).forEach(function(k){ scr[k].classList.add('nofx'); scr[k].classList.remove('is-active', 'is-past', 'under'); });
+  var i = ORDER.indexOf(id); hist = ORDER.slice(0, i < 0 ? 0 : i); cur = null;
+  ORDER.slice(0, i).forEach(function(k){ if (!scr[k].classList.contains('sheet')) scr[k].classList.add('is-past'); });
+  if (scr[id] && scr[id].classList.contains('sheet')) {                        /* jumping to a sheet: its opener stays visible under it */
+    for (var j = i - 1; j >= 0; j--) if (!scr[ORDER[j]].classList.contains('sheet')) { scr[ORDER[j]].classList.remove('is-past'); scr[ORDER[j]].classList.add('under'); break; }
+  }
+  show(id, 'jump');
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){ Object.keys(scr).forEach(function(k){ scr[k].classList.remove('nofx'); }); }); });
+}
+function stepBy(d){ var i = ORDER.indexOf(cur) + d; if (i >= 0 && i < ORDER.length) jump(ORDER[i]); }
+function jumpTo(id){
+  var p = document.getElementById('prototype');
+  if (p && !document.documentElement.classList.contains('appmode')) p.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start'});
+  jump(id);
+}
+function paint(){
+  sync();
+  var c = document.getElementById('chips');
+  if (!c.childElementCount) ORDER.forEach(function(id){
+    var p = C.panel[id] || {}, b = document.createElement('button');
+    b.className = 'au-chip'; b.type = 'button'; b.dataset.id = id; b.setAttribute('role', 'tab');
+    b.innerHTML = (p.idea ? '<i>' + p.idea + '</i>' : '') + ((C.chips && C.chips[id]) || id);
+    b.onclick = function(){ jump(id); };
+    c.appendChild(b);
+  });
+  c.querySelectorAll('.au-chip').forEach(function(b){ var on = b.dataset.id === cur; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
+  var d = C.panel[cur] || {t: cur, why: ''}, n = ORDER.indexOf(cur) + 1;
+  document.getElementById('panel').innerHTML =
+    (d.idea ? '<div class="au-pn-k"><i></i>Idea ' + d.idea + ' of ' + IDEAS + '</div>' : '<div class="au-pn-k au-ctx"><i></i>Context</div>') +
+    '<h3 class="au-pn-t">' + d.t + '</h3><p class="au-pn-h">' + d.why + '</p>' +
+    (d.iv ? '<div class="au-pn-o"><div class="au-lab">Potential outcome · based on Adapty data</div><div class="au-val"><mark>' + d.iv + '</mark></div><div class="au-sub">' + (d.il || '') + '</div></div>' : '') +
+    (d.also ? '<p class="au-pn-a">' + d.also + '</p>' : '') +
+    '<div class="au-pn-nav"><button type="button" onclick="stepBy(-1)"' + (n <= 1 ? ' disabled' : '') + '>‹ Previous</button><span>Screen ' + n + ' of ' + ORDER.length + '</span><button type="button" onclick="stepBy(1)"' + (n === ORDER.length ? ' disabled' : '') + '>Next ›</button></div>';
+  var ab = document.getElementById('abT'); if (ab) ab.textContent = (d.idea ? 'Idea ' + d.idea + ' of ' + IDEAS + ' · ' : '') + (d.t || '');
+}
+document.addEventListener('click', function(e){
+  var j = e.target.closest('[data-jumpto]'); if (j){ e.preventDefault(); jumpTo(j.dataset.jumpto); return; }
+  var L = e.target.closest('[data-setlang]'); if (L){ setLang(L.dataset.setlang); return; }
+  if (e.target.closest('[data-langtoggle]') && LANGS.length > 1){ var k = LANGS.findIndex(function(x){ return x.code === S.lang; }); setLang(LANGS[(k + 1) % LANGS.length].code); return; }
+  var el = e.target.closest('[data-go],[data-back],[data-pick],[data-toggle]'); if (!el) return;
+  if (el.dataset.pick){ var p = el.dataset.pick.split(':'); S[p[0]] = p[1]; sync(); if (el.dataset.advance) setTimeout(function(){ go(el.dataset.advance); }, 170); return; }
+  if (el.dataset.toggle){ var q = el.dataset.toggle.split(':'), a = S[q[0]] = S[q[0]] || [], i = a.indexOf(q[1]); if (i > -1) a.splice(i, 1); else a.push(q[1]); sync(); return; }
+  if ('back' in el.dataset) return back();
+  go(el.dataset.go);
+});
+document.querySelectorAll('[data-input]').forEach(function(inp){
+  inp.value = S[inp.dataset.input] || ''; inp.addEventListener('input', function(){ S[inp.dataset.input] = inp.value.trim() || 'there'; sync(); });
+});
+function $(id){ return document.getElementById(id); }
+
+/* hero stills, shortlist, outcome, sources — from CONTENT */
+$('heroPhones').innerHTML = (C.hero || []).map(function(id, i){
+  var pos = ['l', 'c', 'r'][i] || 'r', t = (C.chips && C.chips[id]) || id;
+  return '<button class="au-hp au-' + pos + '" data-jumpto="' + id + '" aria-label="Open ' + t + '"><img src="assets/hero/' + id + '.png" alt=""></button>';
+}).join('');
+$('ideaList').innerHTML = (C.ideas || []).map(function(r, i){
+  return '<article class="au-idea"><div class="au-num">0' + (i + 1) + '</div><div><h3>' + r.title + '</h3><p>' + r.what + '</p>' +
+    '<button type="button" class="au-lnk" data-jumpto="' + r.screen + '">See it on the screen</button></div>' +
+    '<div class="au-imp"><div class="au-v"><mark>' + r.impact + '</mark></div><div class="au-l">' + r.il + '</div></div></article>';
+}).join('');
+var O = C.outcome || {};
+$('bandNums').innerHTML =
+  (O.cr ? '<div><small>up to</small><b>' + O.cr + '</b><span>CR to purchase</span></div>' : '') +
+  (O.arpu ? '<div><small>up to</small><b>' + O.arpu + '</b><span>ARPU</span></div>' : '');
+$('bandFn').textContent = C.grounding;
+$('fine').textContent = C.grounding + ' Prepared by Adapty.';
+$('srcBody').innerHTML = C.sources.map(function(g){
+  return '<div><h4>' + g.group + '</h4><dl>' + g.items.map(function(it){ return '<dt>' + it.dt + '</dt><dd>' + it.dd + '</dd>'; }).join('') + '</dl></div>';
+}).join('');
+function openSrc(){ var d = $('srcDetails'); d.open = true; d.scrollIntoView({block: 'start'}); }
+
+/* ---- extras: language control, the paywall side by side, QR / phone view, the video ---- */
+if (LANGS.length > 1) {
+  $('langRow').hidden = false;
+  var lb = LANGS.map(function(x){ return '<button type="button" data-setlang="' + x.code + '">' + x.name + '</button>'; }).join('');
+  $('langSw').innerHTML = lb;
+  $('abLang').innerHTML = LANGS.map(function(x){ return '<button type="button" data-setlang="' + x.code + '">' + x.code.toUpperCase() + '</button>'; }).join('');
+}
+var CM = C.compare;
+if (CM && scr[CM.today] && scr[CM.proposed]) {
+  $('compare').hidden = false; $('navCompare').hidden = false;
+  $('cmpBody').innerHTML = '<div class="au-ideas-h"><p class="au-kicker">' + (CM.kicker || 'The paywall, side by side') + '</p><h2 class="au-h2">' + (CM.title || 'Today and proposed.') + (CM.sub ? ' <span>' + CM.sub + '</span>' : '') + '</h2></div>' +
+    '<div class="au-cmp"><figure><img src="assets/hero/' + CM.today + '.png" alt="Your paywall today"><figcaption>Today <span>· ' + (CM.todayCap || 'rebuilt from your recording') + '</span></figcaption></figure>' +
+    '<ol class="au-chg">' + (CM.rows || []).map(function(r){
+      return '<li><h4>' + r.h + (r.idea ? ' <i>Idea ' + r.idea + '</i>' : '') + '</h4><span class="au-was"><em>Today</em>' + r.was + '</span><span class="au-now"><em>Proposed</em>' + r.now + '</span></li>';
+    }).join('') + '</ol>' +
+    '<figure><button type="button" class="au-cmp-go" data-jumpto="' + CM.proposed + '" aria-label="Open the proposed paywall"><img src="assets/hero/' + CM.proposed + '.png" alt="The proposed paywall"></button><figcaption>Proposed <span>· tap to try it</span></figcaption></figure></div>' +
+    (CM.kept ? '<p class="au-kept">' + CM.kept + '</p>' : '');
+}
+if (C.liveUrl) { $('qrCard').hidden = false; $('qrMob').hidden = false; }
+if (/[?&]app\b/.test(Q)) {
+  var H0 = document.documentElement; H0.classList.add('appmode');
+  var openP = function(o){ H0.classList.toggle('au-open', o); $('abWhy').querySelector('em').textContent = o ? 'Close ↓' : 'Why ↑'; };
+  $('abWhy').onclick = function(){ openP(!H0.classList.contains('au-open')); };
+  $('abScrim').onclick = function(){ openP(false); };
+}
+if (C.video) {
+  var dlg = $('vid'), vel = $('vidEl'); vel.src = C.video; if (C.poster) vel.poster = C.poster; $('vidDl').href = C.video;
+  $('heroVideo').hidden = false;
+  $('heroVideo').onclick = function(){ dlg.showModal(); vel.play().catch(function(){}); };
+  $('vidX').onclick = function(){ dlg.close(); };
+  dlg.addEventListener('close', function(){ vel.pause(); });
+  dlg.addEventListener('click', function(e){ if (e.target === dlg) dlg.close(); });
+}
+
+/* ---- ?tour: a deterministic walkthrough from C.tour — tourAt(ms) paints one frame; record-video.sh records it ---- */
+function tourInit(){
+  var T = C.tour, H = document.documentElement, TR = T.transition || 360;
+  H.classList.add('tourmode', 'shot'); document.body.classList.add('nofx');
+  var SEG = T.segments, START = [], STATE = [], UNDER = [], acc = 0, st = JSON.parse(JSON.stringify(C.state));
+  SEG.forEach(function(s, i){
+    START.push(acc); acc += s.d;
+    Object.keys(s.st || {}).forEach(function(k){ st[k] = s.st[k]; }); STATE.push(JSON.parse(JSON.stringify(st)));
+    var u = null; if (scr[s.id].classList.contains('sheet')) for (var j = i - 1; j >= 0; j--) if (!scr[SEG[j].id].classList.contains('sheet')) { u = SEG[j].id; break; }
+    UNDER.push(u);
+  });
+  var TOTAL = acc, capEl = $('tCap'), tap = $('tTap'), pressed = null, popped = [];
+  $('tIntro').innerHTML = '<p class="au-eyebrow"><i></i>' + document.querySelector('.au-top-hero .au-eyebrow').textContent + '</p><h1 class="au-display">' + C.app + '</h1>' +
+    '<p class="au-lede">' + (T.introLede || document.querySelector('.au-top-hero .au-lede').innerHTML) + '</p>';
+  $('tEnd').innerHTML = '<p class="au-eyebrow"><i></i>Growth Audit · ' + C.app + '</p><h2 class="au-te-h">' + (T.endTitle || 'Five ideas, built into your own onboarding.') + '</h2>' +
+    '<div class="au-te-n">' + (O.cr ? '<div><small>up to</small><b>' + O.cr + '</b><span>CR to purchase</span></div>' : '') + (O.arpu ? '<div><small>up to</small><b>' + O.arpu + '</b><span>ARPU</span></div>' : '') + '</div>' +
+    (C.liveUrl ? '<div class="au-te-q"><img src="assets/qr-app.png" alt=""><div><b>Try it on your phone</b><span>' + C.liveUrl.replace(/^https?:\/\//, '').replace(/\/$/, '') + '</span></div></div>' : '') +
+    '<p class="au-te-f">' + C.grounding + '</p>';
+  function ease(x){ return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; }
+  function easeBack(x){ var c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); }
+  function capHTML(c){
+    c = c || {k: '', t: '', l: ''};
+    return '<div class="au-tk' + (c.n ? '' : ' au-ctx') + '"><i></i>' + (c.n ? 'Idea ' + c.n + ' of ' + IDEAS : (c.k || 'Context')) + '</div><h2 class="au-tt">' + c.t + '</h2><p class="au-tl">' + (c.l || '') + '</p>' +
+      (c.o ? '<div class="au-to"><small>Potential outcome · based on Adapty data</small><b><mark>' + c.o + '</mark></b><span>' + (c.ol || '') + '</span></div>' : '');
+  }
+  function place(id, tf, z){ scr[id].style.transform = tf; scr[id].style.zIndex = z; }
+  window.TOUR_MS = TOTAL;
+  window.tourAt = function(ms){
+    ms = Math.max(0, Math.min(TOTAL - 1, ms));
+    var i = 0; while (i < SEG.length - 1 && ms >= START[i + 1]) i++;
+    var s = SEG[i], local = ms - START[i], prev = i > 0 ? SEG[i - 1] : null;
+    Object.keys(STATE[i]).forEach(function(k){ S[k] = STATE[i][k]; }); sync();
+    var moving = prev && prev.id !== s.id && local < TR, p = moving ? ease(local / TR) : 1;
+    Object.keys(scr).forEach(function(k){ scr[k].classList.remove('is-active', 'is-past', 'under'); place(k, 'translateX(100%)', 0); });
+    var B = scr[s.id];
+    if (moving) {
+      if (B.classList.contains('sheet')) { place(prev.id, 'none', 1); B.style.transform = 'translateY(' + (1 - p) * 100 + '%)'; }
+      else {
+        var slide = 'translateX(' + (-28 * p) + '%)'; place(prev.id, slide, 1); B.style.transform = 'translateX(' + (1 - p) * 100 + '%)';
+        if (UNDER[i - 1]) place(UNDER[i - 1], slide, 0);
+      }
+    } else B.style.transform = 'none';
+    B.style.zIndex = 2;
+    if (UNDER[i] && !moving) place(UNDER[i], 'none', 1);
+    /* optional reveal: s.pop scales an element in, s.reveal fades one in a beat later */
+    popped.forEach(function(e){ e.style.transform = ''; e.style.opacity = ''; }); popped = [];
+    var q = Math.max(0, Math.min(1, (local - 250) / 550));
+    if (s.pop) { var pe = B.querySelector(s.pop); if (pe) { pe.style.transform = 'scale(' + (.55 + .45 * easeBack(q)) + ')'; pe.style.opacity = Math.min(1, q * 1.6); popped.push(pe); } }
+    if (s.reveal) { var re = B.querySelector(s.reveal); if (re) { re.style.opacity = Math.max(0, Math.min(1, (local - 520) / 300)); popped.push(re); } }
+    /* caption crossfades at screen changes; waits for the intro, gives way to the end card */
+    var key = s.id, op = 1;
+    if (moving) { if (p < .5) { key = prev.id; op = 1 - p * 2; } else op = p * 2 - 1; }
+    if (capEl.dataset.k !== key) { capEl.innerHTML = capHTML(T.captions[key]); capEl.dataset.k = key; }
+    var io = ms < 1100 ? 1 : Math.max(0, 1 - (ms - 1100) / 300), eo = s.end ? Math.min(1, local / 350) : 0;
+    capEl.style.opacity = op * Math.max(0, Math.min(1, (ms - 1400) / 300)) * (1 - eo);
+    /* the finger: fades in, taps, ripples out. Selectors are scoped to the screen */
+    tap.style.opacity = 0; if (pressed) { pressed.style.opacity = ''; pressed = null; }
+    if (s.tap) {
+      var el = B.querySelector(s.tap[0]), dt = local - s.tap[1];
+      if (el && dt > -260 && dt < 420) {
+        var r = el.getBoundingClientRect();
+        tap.style.left = (r.left + r.width / 2) + 'px'; tap.style.top = (r.top + r.height / 2) + 'px';
+        if (dt < 0) { tap.style.opacity = (dt + 260) / 260 * .9; tap.style.transform = 'scale(1)'; }
+        else { tap.style.opacity = .9 * (1 - dt / 420); tap.style.transform = 'scale(' + (1 + dt / 420 * .9) + ')'; }
+        if (dt >= 0 && dt < 160) { el.style.opacity = .72; pressed = el; }
+      }
+    }
+    $('tIntro').style.opacity = T.intro === false ? 0 : io;
+    $('tEnd').style.opacity = eo;
+    $('tProg').style.width = (ms / TOTAL * 100) + '%';
+    cur = s.id;
+    return i;
+  };
+  var tm = /[?&]t=(\d+)/.exec(Q); tourAt(tm ? +tm[1] : 0);
+}
+
+/* boot: #<screen-id> deep-links a screen (shoot.sh / hero-stills.sh use it); ?lang=xx picks the language */
+(function(){
+  var lm = /[?&]lang=(\w+)/.exec(Q); if (lm) setLang(lm[1]); else setLang(S.lang);
+  var h = location.hash.slice(1);
+  jump(scr[h] ? h : ORDER[0]);
+  if (scr[h] && !SHOT && !document.documentElement.classList.contains('appmode')) setTimeout(function(){ $('prototype').scrollIntoView(); }, 0);
+  if (/[?&]tour\b/.test(Q) && C.tour) tourInit();
+})();
+</script>
+</body>
+</html>
